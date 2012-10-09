@@ -1,17 +1,42 @@
 #import "BWTimeScrubberView.h"
 
+static const CGFloat kTriangleBaseWidth = 30.0;
 
 @implementation BWTimeScrubberView
+
+
+- (void) setCurrentTime: (NSTimeInterval) currentTime {
+    _currentTime = MIN (currentTime, self.totalDuration);
+    [self setNeedsDisplay];
+} // setCurrentTime
+
+
+- (void) drawPlayheadInRect: (CGRect) rect {
+    CGFloat percentage = self.currentTime / self.totalDuration;
+    CGFloat playheadPosition = rect.origin.x + rect.size.width * percentage;
+    
+    UIBezierPath *triangle = [UIBezierPath bezierPath];
+    [triangle moveToPoint: CGPointMake(playheadPosition - (kTriangleBaseWidth / 2.0),
+                                       0.0)];
+    [triangle addLineToPoint: CGPointMake (playheadPosition + (kTriangleBaseWidth / 2.0),
+                                           0.0)];
+    [triangle addLineToPoint: CGPointMake (playheadPosition, rect.size.height)];
+    [triangle closePath];
+
+    [[UIColor blackColor] set];
+    [triangle fill];
+
+} // drawPlayheadInRect
+
 
 - (void) drawRect: (CGRect) rect {
     CGRect bounds = self.bounds;
 
-    UIColor *color = [UIColor colorWithRed: (((int)self >> 0) & 0xFF) / 255.0
-                              green: (((int)self >> 8) & 0xFF) / 255.0
-                              blue: (((int)self >> 16) & 0xFF) / 255.0
-                              alpha: 1.0];
-    [color set];
+
+    [[UIColor whiteColor] set];
     UIRectFill(bounds);
+
+    [self drawPlayheadInRect: bounds];
 
     [[UIColor blackColor] set];
     UIRectFrame(bounds);
@@ -27,7 +52,10 @@
     CGFloat relativePosition = location.x - bounds.origin.x;
     CGFloat percentageAcross = relativePosition / bounds.size.width;
 
-    [self.delegate timeScrubber: self  scrubbedToTime: percentageAcross];
+    NSTimeInterval scrubbedTime = self.totalDuration * percentageAcross;
+
+    [self setCurrentTime: scrubbedTime];
+    [self.delegate timeScrubber: self  scrubbedToTime: scrubbedTime];
 
 } // scrubToTouch
 

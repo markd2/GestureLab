@@ -25,7 +25,9 @@
 	// Do any additional setup after loading the view, typically from a nib.
 
     self.timeScrubber.delegate = self;
+    self.timeScrubber.totalDuration = 10.0;
 }
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -41,7 +43,6 @@
 
 - (void) timeScrubber: (BWTimeScrubberView *) scrubbed
        scrubbedToTime: (NSTimeInterval) time {
-    NSLog (@"LEET SCRUBZORZ %f", time);
 } // scrubbedToTime
 
 
