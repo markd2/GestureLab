@@ -1,0 +1,20 @@
+# Finder cache files
+.DS_Store
+
+# emacs droppings
+*~
+\#*
+.\#*
+
+# Debug symbol directories
+*.dSYM
+
+# Xcode droppings
+*.xcuserdatad
+*.xcuserdata
+
+# Excel droppings
+~$*
+
+# Build directories.
+build/
