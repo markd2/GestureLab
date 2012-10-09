@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+@class BWTimeScrubberView;
+@class BWTouchTrackView;
+
 @interface BWViewController : UIViewController
 
-@end
+@property (nonatomic, weak) IBOutlet BWTimeScrubberView *timeScrubber;
+@property (nonatomic, weak) IBOutlet BWTouchTrackView *touchTrackView;
+
+@end // BWViewController

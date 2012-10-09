@@ -8,7 +8,9 @@
 
 #import "BWViewController.h"
 
-@interface BWViewController ()
+#import "BWTimeScrubberView.h"
+
+@interface BWViewController () <BWTimeScrubberDelegate>
 
 @end
 
@@ -21,6 +23,8 @@
 
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+
+    self.timeScrubber.delegate = self;
 }
 
 - (void)didReceiveMemoryWarning
@@ -33,6 +37,13 @@
 - (BOOL) shouldAutorotateToInterfaceOrientation: (UIInterfaceOrientation) direction {
     return UIInterfaceOrientationIsLandscape(direction);
 } // shouldAutorotate
+
+
+- (void) timeScrubber: (BWTimeScrubberView *) scrubbed
+       scrubbedToTime: (NSTimeInterval) time {
+    NSLog (@"LEET SCRUBZORZ %f", time);
+} // scrubbedToTime
+
 
 @end // BWViewController
 

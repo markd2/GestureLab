@@ -18,4 +18,40 @@
 } // drawRect
 
 
+// --------------------------------------------------
+
+- (void) scrubToTouch: (UITouch *) touch {
+    CGPoint location = [touch locationInView: touch.view];
+    CGRect bounds = self.bounds;
+
+    CGFloat relativePosition = location.x - bounds.origin.x;
+    CGFloat percentageAcross = relativePosition / bounds.size.width;
+
+    [self.delegate timeScrubber: self  scrubbedToTime: percentageAcross];
+
+} // scrubToTouch
+
+
+- (void) touchesBegan: (NSSet *) touches  withEvent: (UIEvent *) event {
+    UITouch *touch = [touches anyObject];
+    [self scrubToTouch: touch];
+    
+} // touchesBegan
+
+
+- (void) touchesMoved: (NSSet *) touches  withEvent: (UIEvent *) event {
+    UITouch *touch = [touches anyObject];
+    [self scrubToTouch: touch];
+
+} // touchesMoved
+
+
+- (void) touchesEnded: (NSSet *) touches  withEvent: (UIEvent *) event {
+} // touchesEnded
+
+
+- (void) touchesCancelled: (NSSet *) touches  withEvent: (UIEvent *) event {
+} // touchesCancelled
+
+
 @end // BWTimeScrubberView
