@@ -112,13 +112,19 @@ static const CGFloat kTrackLineWidth = 5.0;
                     break;
                 }
             }
+
             UIColor *color = [UIColor bwColorWithAddress: key];
+            if (![_touchesInFlight containsObject: key]) {
+                color = [UIColor colorWithWhite: 0.95  alpha: 1.0];
+            }
             [color set];
+
             path.lineWidth = kTrackLineWidth;
             path.lineJoinStyle = kCGLineJoinRound;
             path.lineCapStyle = kCGLineCapRound;
             [path stroke];
         }];
+
 } // drawTracks
 
 
@@ -176,6 +182,8 @@ static const CGFloat kTrackLineWidth = 5.0;
 
     BWTouchThing *thing = [BWTouchThing thingFromUITouch: touch];
     [track addObject: thing];
+
+    [self setNeedsDisplay];
 
 } // trackTouch
 
@@ -240,6 +248,7 @@ static const CGFloat kTrackLineWidth = 5.0;
 + (id) thingFromUITouch: (UITouch *) touch {
     return [[self alloc] initWithTouch: touch];
 } // thingFromUITouch
+
 
 - (NSString *) description {
     static const char *phases[] = {
