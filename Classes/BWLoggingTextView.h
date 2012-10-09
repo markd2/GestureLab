@@ -6,4 +6,8 @@
 
 - (void) addLine: (NSString *) line;
 
+- (void) displayToTimestamp: (NSTimeInterval) timestamp;  // From 0 .. whenver
+
+- (void) clear;
+
 @end // BWLoggingTextView

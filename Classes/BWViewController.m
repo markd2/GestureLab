@@ -42,11 +42,13 @@
 - (void) timeScrubber: (BWTimeScrubberView *) scrubbed
        scrubbedToTime: (NSTimeInterval) time {
     [self.touchTrackView drawUpToTimestamp: time];
+    [self.loggingTextView displayToTimestamp: time];
 } // scrubbedToTime
 
 
 - (void) touchTrackBeganTracking: (BWTouchTrackView *) touchTrack {
     self.timeScrubber.mode = kModeReadonly;
+    [self.loggingTextView clear];
 } // touchTrackBeganTracking
 
 

@@ -7,14 +7,24 @@
 
     int _standardOutPipe[2];
 
+    NSTimeInterval _startTimestamp;
+    NSMutableArray *_lines;
+
     CFSocketRef _socketRef;
 }
 @end // extension
 
 enum { kReadSide, kWriteSide };  // The two side to every pipe()
 
-@implementation BWLoggingTextView
 
+@interface BWLogEntry : NSObject
+@property (nonatomic, assign) NSTimeInterval timestamp;
+@property (nonatomic, copy) NSString *line;
++ (BWLogEntry *) entryWithLine: (NSString *) line;
+@end // BWLogEntry
+
+
+@implementation BWLoggingTextView
 
 static void ReceiveMessage (CFSocketRef socket, CFSocketCallBackType type,
                             CFDataRef address, const void *data, void *info) {
@@ -99,11 +109,70 @@ bailout:
 } // initWithCoder
 
 
+- (void) scrollToEnd {
+    NSRange range = NSMakeRange (_contents.length, 0);
+    [self scrollRangeToVisible: range];
+} // scrollToEnd
+
+
 - (void) addLine: (NSString *) line {
     if (_contents == nil) _contents = [NSMutableString string];
+    if (_lines == nil) _lines = [NSMutableArray array];
 
     [_contents appendString: line];
     self.text = _contents;
+
+    BWLogEntry *entry = [BWLogEntry entryWithLine: line];
+    [_lines addObject: entry];
+
+    [self scrollToEnd];
+
 } // addLine
 
+
+- (void) clear {
+    [_contents setString: @""];
+    self.text = _contents;
+
+    [_lines removeAllObjects];
+    _startTimestamp = [NSDate timeIntervalSinceReferenceDate];
+} // clear
+
+
+- (void) displayToTimestamp: (NSTimeInterval) timestamp {
+    NSTimeInterval adjustedTimestamp = _startTimestamp + timestamp;
+
+    [_contents setString: @""];
+
+    for (BWLogEntry *line in _lines) {
+        if (line.timestamp > adjustedTimestamp) break;
+        [_contents appendString: line.line];
+    }
+
+    self.text = _contents;
+    [self scrollToEnd];
+    
+} // displayToTimestamp
+
+
 @end // BWLoggingTextView
+
+
+@implementation BWLogEntry
+
+- (id) initWithLine: (NSString *) line {
+    if ((self = [super init])) {
+        _timestamp = [NSDate timeIntervalSinceReferenceDate];
+        _line = [line copy];
+    }
+
+    return self;
+
+} // initWithLine
+
+
++ (BWLogEntry *) entryWithLine: (NSString *) line {
+    return [[self alloc] initWithLine: line];
+} // entryWithLine
+
+@end // BWLogEntry
