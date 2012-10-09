@@ -85,6 +85,15 @@ static UIColor *kTrackingBackgroundColor;
 } // initWithCoder
 
 
+- (void) postNotification: (NSString *) notificationName {
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center postNotificationName: notificationName
+            object: self];
+
+    NSLog (@"DIFF IS %f", self.trackingDuration);
+} // postNotification
+
+
 - (void) setState: (TrackingState) state {
     if (_state != state) {
         _state = state;
@@ -95,9 +104,14 @@ static UIColor *kTrackingBackgroundColor;
 
 // Triggered by performSelector/after delay
 - (void) finishedTracking {
-    NSLog (@"GRONK!");
     [self setState: kStateReadyToTrack];
+    [self postNotification: BWTouchTrackView_TrackingEnded];
 } // finishedTracking
+
+
+- (NSTimeInterval) trackingDuration {
+    return self.endTimestamp - self.startTimestamp;
+} // trackingDuration
 
 
 - (void) drawBackground: (CGRect) rect {
@@ -189,6 +203,20 @@ static UIColor *kTrackingBackgroundColor;
 // --------------------------------------------------
 
 - (void) startTrackingTouch: (UITouch *) touch {
+
+    if (_state == kStateReadyToTrack) {
+        [_touchesInFlight removeAllObjects];
+        [_touchTracks removeAllObjects];
+
+        [self setState: kStateTracking];
+
+        self.startTimestamp = touch.timestamp;
+        self.endTimestamp = touch.timestamp;
+
+        [self postNotification: BWTouchTrackView_TrackingBegan];
+    }
+
+
     NSValue *touchAddress = touch.bwAddressValue;
 
     [_touchesInFlight addObject: touch.bwAddressValue];
@@ -220,6 +248,8 @@ static UIColor *kTrackingBackgroundColor;
 
 
 - (void) trackTouch: (UITouch *) touch {
+    self.endTimestamp = touch.timestamp;
+
     NSValue *touchAddress = touch.bwAddressValue;
     NSMutableArray *track = [_touchTracks objectForKey: touchAddress];
     assert (track);
@@ -238,13 +268,6 @@ static UIColor *kTrackingBackgroundColor;
 
 
 - (void) touchesBegan: (NSSet *) touches  withEvent: (UIEvent *) event {
-    if (_state == kStateReadyToTrack) {
-        [_touchesInFlight removeAllObjects];
-        [_touchTracks removeAllObjects];
-
-        [self setState: kStateTracking];
-    }
-
     for (UITouch *touch in touches) {
         [self startTrackingTouch: touch];
         [self trackTouch: touch];
