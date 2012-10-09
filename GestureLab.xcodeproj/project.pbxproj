@@ -18,6 +18,7 @@
 		7D28FBBC162490F900AEF374 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7D28FBBB162490F900AEF374 /* InfoPlist.strings */; };
 		7D28FBC31624961700AEF374 /* BWTouchTrackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBC21624961700AEF374 /* BWTouchTrackView.m */; };
 		7D28FBC71624A2A800AEF374 /* NSObject+AddressValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBC61624A2A800AEF374 /* NSObject+AddressValue.m */; };
+		7D28FBCA1624A9D800AEF374 /* UIColor+AddressColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBC91624A9D800AEF374 /* UIColor+AddressColor.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,8 @@
 		7D28FBC21624961700AEF374 /* BWTouchTrackView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWTouchTrackView.m; path = Classes/BWTouchTrackView.m; sourceTree = SOURCE_ROOT; };
 		7D28FBC51624A2A800AEF374 /* NSObject+AddressValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+AddressValue.h"; path = "Classes/NSObject+AddressValue.h"; sourceTree = SOURCE_ROOT; };
 		7D28FBC61624A2A800AEF374 /* NSObject+AddressValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+AddressValue.m"; path = "Classes/NSObject+AddressValue.m"; sourceTree = SOURCE_ROOT; };
+		7D28FBC81624A9D800AEF374 /* UIColor+AddressColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+AddressColor.h"; path = "Classes/UIColor+AddressColor.h"; sourceTree = SOURCE_ROOT; };
+		7D28FBC91624A9D800AEF374 /* UIColor+AddressColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+AddressColor.m"; path = "Classes/UIColor+AddressColor.m"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +96,8 @@
 				7D28FBA716248F3000AEF374 /* BWViewController.m */,
 				7D28FBC51624A2A800AEF374 /* NSObject+AddressValue.h */,
 				7D28FBC61624A2A800AEF374 /* NSObject+AddressValue.m */,
+				7D28FBC81624A9D800AEF374 /* UIColor+AddressColor.h */,
+				7D28FBC91624A9D800AEF374 /* UIColor+AddressColor.m */,
 				7D28FBA916248F3000AEF374 /* BWViewController.xib */,
 				7D28FBB9162490B200AEF374 /* main.m */,
 				7D28FBBB162490F900AEF374 /* InfoPlist.strings */,
@@ -181,6 +186,7 @@
 				7D28FBBA162490B200AEF374 /* main.m in Sources */,
 				7D28FBC31624961700AEF374 /* BWTouchTrackView.m in Sources */,
 				7D28FBC71624A2A800AEF374 /* NSObject+AddressValue.m in Sources */,
+				7D28FBCA1624A9D800AEF374 /* UIColor+AddressColor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
