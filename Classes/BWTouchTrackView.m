@@ -10,9 +10,16 @@ static const CGFloat kPromptTextSize = 36.0;
 
 @interface BWTouchTrackView () {
     TrackingState _state;
+    NSMutableSet *_touchesInFlight;    // keyed by touch address wrapped in NSValue
+    NSMutableDictionary *_touchTracks; // keyed by touch address wrapped in NSValue
 }
 
 @end // extension
+
+
+@interface UITouch (BWAddressExtension)
+- (NSValue *) bwAddressValue;  // 'self' wrapped in an NSValue
+@end // BWAddressExtension
 
 
 @implementation BWTouchTrackView
@@ -20,6 +27,10 @@ static const CGFloat kPromptTextSize = 36.0;
 - (void) commonInit {
     self.userInteractionEnabled = YES;
     self.multipleTouchEnabled = YES;
+    _state = kStateReadyToTrack;
+
+    _touchesInFlight = [NSMutableSet set];
+    _touchTracks = [NSMutableDictionary dictionary];
 } // commonInit
 
 
@@ -90,40 +101,53 @@ static const CGFloat kPromptTextSize = 36.0;
 // --------------------------------------------------
 
 
-- (void) dumpTouches: (NSSet *) touches {
-    static char *phases[] = {
-        "began", "moved", "stationary", "ended", "cancelled"
-    };
-    
-    for (UITouch *touch in touches) {
-        NSLog (@"    %p - %f %d (%s)", 
-               touch, touch.timestamp, touch.tapCount, phases[touch.phase]);
+- (void) touchesBegan: (NSSet *) touches  withEvent: (UIEvent *) event {
+    if (_state == kStateReadyToTrack) {
+        [_touchesInFlight removeAllObjects];
+        [_touchTracks removeAllObjects];
+
+        _state = kStateTracking;
     }
 
-} // dumpTouches
+    for (UITouch *touch in touches) {
+        [_touchesInFlight addObject: touch.bwAddressValue];
+        NSLog (@"IN FLIGHT %@", _touchesInFlight);
+    }
 
-- (void) touchesBegan: (NSSet *) touches  withEvent: (UIEvent *) event {
-    NSLog (@"BEGAN");
-    [self dumpTouches: touches];
 } // touchesBegan
 
 
 - (void) touchesMoved: (NSSet *) touches  withEvent: (UIEvent *) event {
-    NSLog (@"MOVED");
-    [self dumpTouches: touches];
 
 } // touchesMoved
 
 
 - (void) touchesEnded: (NSSet *) touches  withEvent: (UIEvent *) event {
-    NSLog (@"ENDED");
+    for (UITouch *touch in touches) {
+        [_touchesInFlight removeObject: touch.bwAddressValue];
+        NSLog (@"IN FLIGHT %@", _touchesInFlight);
+    }
+
 } // touchesEnded
 
 
 - (void) touchesCancelled: (NSSet *) touches  withEvent: (UIEvent *) event {
-    NSLog (@"Cancelled");
+    for (UITouch *touch in touches) {
+        [_touchesInFlight removeObject: touch.bwAddressValue];
+        NSLog (@"IN FLIGHT %@", _touchesInFlight);
+    }
 
 } // touchesCancelled
 
 @end // BWTouchView
 
+
+@implementation UITouch (BWAddressExtension)
+
+- (NSValue *) bwAddressValue {
+    NSValue *value = [NSValue value: &self
+                              withObjCType: @encode(void *)];
+    return value;
+} // bwAddressValue
+
+@end // BWAddressExtension
