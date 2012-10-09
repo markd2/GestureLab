@@ -312,6 +312,7 @@ static UIColor *kTrackingBackgroundColor;
         [self trackTouch: touch];
     }
 
+    NSLog (@"BEGAN! %@", touches);
 } // touchesBegan
 
 
