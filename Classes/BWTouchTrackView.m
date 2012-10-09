@@ -19,6 +19,19 @@ static const CGFloat kPromptTextSize = 36.0;
 @end // extension
 
 
+
+@interface BWTouchThing : NSObject
+@property (nonatomic, strong) UITouch *touch;
+@property (nonatomic, assign) NSTimeInterval timestamp;
+@property (nonatomic, assign) UITouchPhase phase;
+@property (nonatomic, assign) CGPoint locationInView;
+
++ (id) thingFromUITouch: (UITouch *) touch;
+
+@end // BWTouchThing
+
+
+
 @implementation BWTouchTrackView
 
 - (void) commonInit {
@@ -97,6 +110,43 @@ static const CGFloat kPromptTextSize = 36.0;
 
 // --------------------------------------------------
 
+- (void) startTrackingTouch: (UITouch *) touch {
+    NSValue *touchAddress = touch.bwAddressValue;
+
+    [_touchesInFlight addObject: touch.bwAddressValue];
+
+    // Add a tracking array if not already there.
+    NSMutableArray *track = [_touchTracks objectForKey: touchAddress];
+    
+    if (track) {
+        NSLog (@"RECYCLING?");
+    } else {
+        track = [NSMutableArray array];
+        [_touchTracks setObject: track  forKey: touchAddress];
+    }
+
+} // startTrackingTouch
+
+
+- (void) stopTrackingTouch: (UITouch *) touch {
+    [_touchesInFlight removeObject: touch.bwAddressValue];
+
+    if (_touchesInFlight.count == 0) {
+        NSLog (@"SNORK %@", _touchTracks);
+    }
+} // stopTrackingTouch
+
+
+- (void) trackTouch: (UITouch *) touch {
+    NSValue *touchAddress = touch.bwAddressValue;
+    NSMutableArray *track = [_touchTracks objectForKey: touchAddress];
+    assert (track);
+
+    BWTouchThing *thing = [BWTouchThing thingFromUITouch: touch];
+    [track addObject: thing];
+
+} // trackTouch
+
 
 - (void) touchesBegan: (NSSet *) touches  withEvent: (UIEvent *) event {
     if (_state == kStateReadyToTrack) {
@@ -107,22 +157,24 @@ static const CGFloat kPromptTextSize = 36.0;
     }
 
     for (UITouch *touch in touches) {
-        [_touchesInFlight addObject: touch.bwAddressValue];
-        NSLog (@"IN FLIGHT %@", _touchesInFlight);
+        [self startTrackingTouch: touch];
+        [self trackTouch: touch];
     }
 
 } // touchesBegan
 
 
 - (void) touchesMoved: (NSSet *) touches  withEvent: (UIEvent *) event {
-
+    for (UITouch *touch in touches) {
+        [self trackTouch: touch];
+    }
 } // touchesMoved
 
 
 - (void) touchesEnded: (NSSet *) touches  withEvent: (UIEvent *) event {
     for (UITouch *touch in touches) {
-        [_touchesInFlight removeObject: touch.bwAddressValue];
-        NSLog (@"IN FLIGHT %@", _touchesInFlight);
+        [self trackTouch: touch];
+        [self stopTrackingTouch: touch];
     }
 
 } // touchesEnded
@@ -130,12 +182,32 @@ static const CGFloat kPromptTextSize = 36.0;
 
 - (void) touchesCancelled: (NSSet *) touches  withEvent: (UIEvent *) event {
     for (UITouch *touch in touches) {
-        [_touchesInFlight removeObject: touch.bwAddressValue];
-        NSLog (@"IN FLIGHT %@", _touchesInFlight);
+        [self trackTouch: touch];
+        [self stopTrackingTouch: touch];
     }
-
 } // touchesCancelled
 
 @end // BWTouchView
 
 
+@implementation BWTouchThing
+
+- (id) initWithTouch: (UITouch *) touch {
+    if ((self = [super init])) {
+        _touch = touch;
+        _timestamp = touch.timestamp;
+        _phase = touch.phase;
+        _locationInView = [touch locationInView: touch.view];
+    }
+
+    return self;
+
+} // initWithTouch
+
+
++ (id) thingFromUITouch: (UITouch *) touch {
+    return [[self alloc] initWithTouch: touch];
+} // thingFromUITouch
+
+
+@end // BWTouchThing
