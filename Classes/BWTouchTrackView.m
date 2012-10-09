@@ -11,6 +11,12 @@ typedef enum : NSInteger {
 static const CGFloat kPromptTextSize = 36.0;
 static const CGFloat kTrackLineWidth = 5.0;
 
+// How long to wait before returning to ready-to-track state.
+static const CGFloat kLastTouchTimeout = 2.0;
+
+static UIColor *kTrackingBackgroundColor;
+
+
 @interface BWTouchTrackView () {
     TrackingState _state;
     NSMutableSet *_touchesInFlight;    // keyed by touch address wrapped in NSValue
@@ -34,6 +40,20 @@ static const CGFloat kTrackLineWidth = 5.0;
 
 
 @implementation BWTouchTrackView
+
+- (UIColor *) trackingBackgroundColor {
+    if (kTrackingBackgroundColor == nil) {
+        kTrackingBackgroundColor = [UIColor colorWithRed: 0.919607843184834778188281772
+                                            green: 0.976862745128818388273781738
+                                            blue: 1.0
+                                            alpha: 1.0];
+
+    }
+
+    return kTrackingBackgroundColor;
+
+} // trackingBackgroundColor
+
 
 - (void) commonInit {
     self.userInteractionEnabled = YES;
@@ -65,8 +85,28 @@ static const CGFloat kTrackLineWidth = 5.0;
 } // initWithCoder
 
 
+- (void) setState: (TrackingState) state {
+    if (_state != state) {
+        _state = state;
+        [self setNeedsDisplay];
+    }
+} // setState
+
+
+// Triggered by performSelector/after delay
+- (void) finishedTracking {
+    NSLog (@"GRONK!");
+    [self setState: kStateReadyToTrack];
+} // finishedTracking
+
+
 - (void) drawBackground: (CGRect) rect {
-    [[UIColor whiteColor] set];
+    if (_state == kStateReadyToTrack) {
+        [[UIColor whiteColor] set];
+    } else {
+        [[self trackingBackgroundColor] set];
+    }
+
     UIRectFill (rect);
 } // drawBackground
 
@@ -171,6 +211,10 @@ static const CGFloat kTrackLineWidth = 5.0;
 
     if (_touchesInFlight.count == 0) {
         [self setNeedsDisplay];
+
+        [self performSelector:@selector(finishedTracking)
+              withObject: nil
+              afterDelay: kLastTouchTimeout];
     }
 } // stopTrackingTouch
 
@@ -185,6 +229,11 @@ static const CGFloat kTrackLineWidth = 5.0;
 
     [self setNeedsDisplay];
 
+    // Have more touches come in since we saw the last touch sequence end?
+    [NSObject cancelPreviousPerformRequestsWithTarget: self
+              selector: @selector(finishedTracking)
+              object: nil];
+
 } // trackTouch
 
 
@@ -193,7 +242,7 @@ static const CGFloat kTrackLineWidth = 5.0;
         [_touchesInFlight removeAllObjects];
         [_touchTracks removeAllObjects];
 
-        _state = kStateTracking;
+        [self setState: kStateTracking];
     }
 
     for (UITouch *touch in touches) {
