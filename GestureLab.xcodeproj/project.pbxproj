@@ -17,6 +17,7 @@
 		7D28FBBA162490B200AEF374 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBB9162490B200AEF374 /* main.m */; };
 		7D28FBBC162490F900AEF374 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7D28FBBB162490F900AEF374 /* InfoPlist.strings */; };
 		7D28FBC31624961700AEF374 /* BWTouchTrackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBC21624961700AEF374 /* BWTouchTrackView.m */; };
+		7D28FBC71624A2A800AEF374 /* NSObject+AddressValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBC61624A2A800AEF374 /* NSObject+AddressValue.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,8 @@
 		7D28FBBB162490F900AEF374 /* InfoPlist.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = SOURCE_ROOT; };
 		7D28FBC11624961700AEF374 /* BWTouchTrackView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BWTouchTrackView.h; path = Classes/BWTouchTrackView.h; sourceTree = SOURCE_ROOT; };
 		7D28FBC21624961700AEF374 /* BWTouchTrackView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWTouchTrackView.m; path = Classes/BWTouchTrackView.m; sourceTree = SOURCE_ROOT; };
+		7D28FBC51624A2A800AEF374 /* NSObject+AddressValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+AddressValue.h"; path = "Classes/NSObject+AddressValue.h"; sourceTree = SOURCE_ROOT; };
+		7D28FBC61624A2A800AEF374 /* NSObject+AddressValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+AddressValue.m"; path = "Classes/NSObject+AddressValue.m"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +91,8 @@
 				7D28FB9E16248F3000AEF374 /* BWAppDelegate.m */,
 				7D28FBA616248F3000AEF374 /* BWViewController.h */,
 				7D28FBA716248F3000AEF374 /* BWViewController.m */,
+				7D28FBC51624A2A800AEF374 /* NSObject+AddressValue.h */,
+				7D28FBC61624A2A800AEF374 /* NSObject+AddressValue.m */,
 				7D28FBA916248F3000AEF374 /* BWViewController.xib */,
 				7D28FBB9162490B200AEF374 /* main.m */,
 				7D28FBBB162490F900AEF374 /* InfoPlist.strings */,
@@ -175,6 +180,7 @@
 				7D28FBA816248F3000AEF374 /* BWViewController.m in Sources */,
 				7D28FBBA162490B200AEF374 /* main.m in Sources */,
 				7D28FBC31624961700AEF374 /* BWTouchTrackView.m in Sources */,
+				7D28FBC71624A2A800AEF374 /* NSObject+AddressValue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
