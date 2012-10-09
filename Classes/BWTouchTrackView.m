@@ -1,5 +1,7 @@
 #import "BWTouchTrackView.h"
 
+#import "NSObject+AddressValue.h"
+
 typedef enum : NSInteger {
     kStateReadyToTrack,
     kStateTracking
@@ -15,11 +17,6 @@ static const CGFloat kPromptTextSize = 36.0;
 }
 
 @end // extension
-
-
-@interface UITouch (BWAddressExtension)
-- (NSValue *) bwAddressValue;  // 'self' wrapped in an NSValue
-@end // BWAddressExtension
 
 
 @implementation BWTouchTrackView
@@ -142,12 +139,3 @@ static const CGFloat kPromptTextSize = 36.0;
 @end // BWTouchView
 
 
-@implementation UITouch (BWAddressExtension)
-
-- (NSValue *) bwAddressValue {
-    NSValue *value = [NSValue value: &self
-                              withObjCType: @encode(void *)];
-    return value;
-} // bwAddressValue
-
-@end // BWAddressExtension
