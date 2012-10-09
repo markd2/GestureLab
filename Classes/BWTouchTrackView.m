@@ -89,13 +89,28 @@ static const CGFloat kPromptTextSize = 36.0;
 
 // --------------------------------------------------
 
+
+- (void) dumpTouches: (NSSet *) touches {
+    static char *phases[] = {
+        "began", "moved", "stationary", "ended", "cancelled"
+    };
+    
+    for (UITouch *touch in touches) {
+        NSLog (@"    %p - %f %d (%s)", 
+               touch, touch.timestamp, touch.tapCount, phases[touch.phase]);
+    }
+
+} // dumpTouches
+
 - (void) touchesBegan: (NSSet *) touches  withEvent: (UIEvent *) event {
     NSLog (@"BEGAN");
+    [self dumpTouches: touches];
 } // touchesBegan
 
 
 - (void) touchesMoved: (NSSet *) touches  withEvent: (UIEvent *) event {
     NSLog (@"MOVED");
+    [self dumpTouches: touches];
 
 } // touchesMoved
 
