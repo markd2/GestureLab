@@ -19,6 +19,7 @@
 		7D28FBC31624961700AEF374 /* BWTouchTrackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBC21624961700AEF374 /* BWTouchTrackView.m */; };
 		7D28FBC71624A2A800AEF374 /* NSObject+AddressValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBC61624A2A800AEF374 /* NSObject+AddressValue.m */; };
 		7D28FBCA1624A9D800AEF374 /* UIColor+AddressColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBC91624A9D800AEF374 /* UIColor+AddressColor.m */; };
+		7D28FBCD1624B79100AEF374 /* BWTimeScrubberView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBCC1624B79100AEF374 /* BWTimeScrubberView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,8 @@
 		7D28FBC61624A2A800AEF374 /* NSObject+AddressValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+AddressValue.m"; path = "Classes/NSObject+AddressValue.m"; sourceTree = SOURCE_ROOT; };
 		7D28FBC81624A9D800AEF374 /* UIColor+AddressColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+AddressColor.h"; path = "Classes/UIColor+AddressColor.h"; sourceTree = SOURCE_ROOT; };
 		7D28FBC91624A9D800AEF374 /* UIColor+AddressColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+AddressColor.m"; path = "Classes/UIColor+AddressColor.m"; sourceTree = SOURCE_ROOT; };
+		7D28FBCB1624B79000AEF374 /* BWTimeScrubberView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BWTimeScrubberView.h; path = Classes/BWTimeScrubberView.h; sourceTree = SOURCE_ROOT; };
+		7D28FBCC1624B79100AEF374 /* BWTimeScrubberView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWTimeScrubberView.m; path = Classes/BWTimeScrubberView.m; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,8 +91,10 @@
 		7D28FB9416248F3000AEF374 /* GestureLab */ = {
 			isa = PBXGroup;
 			children = (
-				7D28FBC21624961700AEF374 /* BWTouchTrackView.m */,
 				7D28FBC11624961700AEF374 /* BWTouchTrackView.h */,
+				7D28FBC21624961700AEF374 /* BWTouchTrackView.m */,
+				7D28FBCB1624B79000AEF374 /* BWTimeScrubberView.h */,
+				7D28FBCC1624B79100AEF374 /* BWTimeScrubberView.m */,
 				7D28FB9D16248F3000AEF374 /* BWAppDelegate.h */,
 				7D28FB9E16248F3000AEF374 /* BWAppDelegate.m */,
 				7D28FBA616248F3000AEF374 /* BWViewController.h */,
@@ -187,6 +192,7 @@
 				7D28FBC31624961700AEF374 /* BWTouchTrackView.m in Sources */,
 				7D28FBC71624A2A800AEF374 /* NSObject+AddressValue.m in Sources */,
 				7D28FBCA1624A9D800AEF374 /* UIColor+AddressColor.m in Sources */,
+				7D28FBCD1624B79100AEF374 /* BWTimeScrubberView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
