@@ -16,6 +16,9 @@
 
 - (void)viewDidLoad
 {
+    // I *LOVE* the mixture of tabs and spaces in the template -
+    // nice attention to detail, Apple!
+
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
 }
@@ -26,4 +29,10 @@
     // Dispose of any resources that can be recreated.
 }
 
-@end
+
+- (BOOL) shouldAutorotateToInterfaceOrientation: (UIInterfaceOrientation) direction {
+    return UIInterfaceOrientationIsLandscape(direction);
+} // shouldAutorotate
+
+@end // BWViewController
+
