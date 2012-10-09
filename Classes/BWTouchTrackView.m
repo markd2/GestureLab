@@ -5,7 +5,8 @@
 
 typedef enum : NSInteger {
     kStateReadyToTrack,
-    kStateTracking
+    kStateTracking,
+    kStateScrolledDrawback
 } TrackingState;
 
 static const CGFloat kPromptTextSize = 36.0;
@@ -21,6 +22,7 @@ static UIColor *kTrackingBackgroundColor;
     TrackingState _state;
     NSMutableSet *_touchesInFlight;    // keyed by touch address wrapped in NSValue
     NSMutableDictionary *_touchTracks; // keyed by touch address wrapped in NSValue
+    NSTimeInterval _drawTimestamp;
 }
 
 @end // extension
@@ -85,6 +87,13 @@ static UIColor *kTrackingBackgroundColor;
 } // initWithCoder
 
 
+- (void) drawUpToTimestamp: (NSTimeInterval) timestamp {
+    _drawTimestamp = timestamp;
+    [self setState: kStateScrolledDrawback];
+    [self setNeedsDisplay];
+} // drawUpToTimestamp
+
+
 - (void) setState: (TrackingState) state {
     if (_state != state) {
         _state = state;
@@ -106,7 +115,7 @@ static UIColor *kTrackingBackgroundColor;
 
 
 - (void) drawBackground: (CGRect) rect {
-    if (_state == kStateReadyToTrack) {
+    if (_state == kStateReadyToTrack || _state == kStateScrolledDrawback) {
         [[UIColor whiteColor] set];
     } else {
         [[self trackingBackgroundColor] set];
@@ -138,7 +147,42 @@ static UIColor *kTrackingBackgroundColor;
 } // drawPromptTextInRect
 
 
-- (void) drawTracks {
+- (void) drawTracksUntilTime: (NSTimeInterval) timestamp {
+    NSTimeInterval adjustedTimestamp = self.startTimestamp + timestamp;
+
+    [_touchTracks enumerateKeysAndObjectsUsingBlock: ^(id key, id value, BOOL *stop) {
+            UIBezierPath *path = [UIBezierPath bezierPath];
+            path.lineWidth = kTrackLineWidth;
+            path.lineJoinStyle = kCGLineJoinRound;
+            path.lineCapStyle = kCGLineCapRound;
+
+            for (BWTouchThing *thing in value) {
+                if (thing.timestamp > adjustedTimestamp) break;
+
+                switch (thing.phase) {
+                case UITouchPhaseBegan:
+                    [path moveToPoint: thing.locationInView];
+                    break;
+
+                case UITouchPhaseStationary:
+                case UITouchPhaseMoved:
+                case UITouchPhaseEnded:
+                case UITouchPhaseCancelled:
+                    [path addLineToPoint: thing.locationInView];
+                    break;
+                }
+            }
+
+            UIColor *color = [UIColor bwColorWithAddress: key];
+            [color set];
+
+            [path stroke];
+        }];
+
+} // drawTracksUntilTime
+
+
+- (void) drawActiveTracks {
     // Keys are the nsvalue-wrapped UITouch, the value is a mutable array of Things.
 
     [_touchTracks enumerateKeysAndObjectsUsingBlock: ^(id key, id value, BOOL *stop) {
@@ -170,7 +214,7 @@ static UIColor *kTrackingBackgroundColor;
             [path stroke];
         }];
 
-} // drawTracks
+} // drawActiveTracks
 
 
 - (void) drawFrame: (CGRect) rect {
@@ -184,9 +228,14 @@ static UIColor *kTrackingBackgroundColor;
     CGRect bounds = self.bounds;
 
     [self drawBackground: bounds];
+
     [self drawPromptTextInRect: bounds];
 
-    [self drawTracks];
+    if (_state == kStateReadyToTrack || _state == kStateTracking) {
+        [self drawActiveTracks];
+    } else {
+        [self drawTracksUntilTime: _drawTimestamp];
+    }
     [self drawFrame: bounds];
 
 } // drawRect
@@ -195,7 +244,7 @@ static UIColor *kTrackingBackgroundColor;
 
 - (void) startTrackingTouch: (UITouch *) touch {
 
-    if (_state == kStateReadyToTrack) {
+    if (_state == kStateReadyToTrack || _state == kStateScrolledDrawback) {
         [_touchesInFlight removeAllObjects];
         [_touchTracks removeAllObjects];
 

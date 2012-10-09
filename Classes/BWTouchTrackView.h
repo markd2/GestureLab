@@ -12,6 +12,8 @@
 
 @property (nonatomic, weak) id <BWTouchTrackViewDelegate> delegate;
 
+- (void) drawUpToTimestamp: (NSTimeInterval) timestamp;  // 0 .. trackingDuration
+
 @end // BWTouchTackView
 
 
