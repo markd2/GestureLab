@@ -20,6 +20,7 @@
 		7D28FBC71624A2A800AEF374 /* NSObject+AddressValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBC61624A2A800AEF374 /* NSObject+AddressValue.m */; };
 		7D28FBCA1624A9D800AEF374 /* UIColor+AddressColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBC91624A9D800AEF374 /* UIColor+AddressColor.m */; };
 		7D28FBCD1624B79100AEF374 /* BWTimeScrubberView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBCC1624B79100AEF374 /* BWTimeScrubberView.m */; };
+		7D28FBD01624C8FA00AEF374 /* BWLoggingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBCF1624C8FA00AEF374 /* BWLoggingTextView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,8 @@
 		7D28FBC91624A9D800AEF374 /* UIColor+AddressColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+AddressColor.m"; path = "Classes/UIColor+AddressColor.m"; sourceTree = SOURCE_ROOT; };
 		7D28FBCB1624B79000AEF374 /* BWTimeScrubberView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BWTimeScrubberView.h; path = Classes/BWTimeScrubberView.h; sourceTree = SOURCE_ROOT; };
 		7D28FBCC1624B79100AEF374 /* BWTimeScrubberView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWTimeScrubberView.m; path = Classes/BWTimeScrubberView.m; sourceTree = SOURCE_ROOT; };
+		7D28FBCE1624C8FA00AEF374 /* BWLoggingTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BWLoggingTextView.h; path = Classes/BWLoggingTextView.h; sourceTree = SOURCE_ROOT; };
+		7D28FBCF1624C8FA00AEF374 /* BWLoggingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWLoggingTextView.m; path = Classes/BWLoggingTextView.m; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +107,8 @@
 				7D28FBA616248F3000AEF374 /* BWViewController.h */,
 				7D28FBA716248F3000AEF374 /* BWViewController.m */,
 				7D28FBA916248F3000AEF374 /* BWViewController.xib */,
+				7D28FBCE1624C8FA00AEF374 /* BWLoggingTextView.h */,
+				7D28FBCF1624C8FA00AEF374 /* BWLoggingTextView.m */,
 				7D28FBB9162490B200AEF374 /* main.m */,
 				7D28FBBB162490F900AEF374 /* InfoPlist.strings */,
 				7D28FB9516248F3000AEF374 /* Supporting Files */,
@@ -193,6 +198,7 @@
 				7D28FBC71624A2A800AEF374 /* NSObject+AddressValue.m in Sources */,
 				7D28FBCA1624A9D800AEF374 /* UIColor+AddressColor.m in Sources */,
 				7D28FBCD1624B79100AEF374 /* BWTimeScrubberView.m in Sources */,
+				7D28FBD01624C8FA00AEF374 /* BWLoggingTextView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

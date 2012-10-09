@@ -8,6 +8,7 @@
 
 #import "BWViewController.h"
 
+#import "BWLoggingTextView.h"
 #import "BWTimeScrubberView.h"
 #import "BWTouchTrackView.h"
 
@@ -28,6 +29,8 @@
     self.touchTrackView.delegate = self;
     self.timeScrubber.delegate = self;
     self.timeScrubber.totalDuration = 0.0;
+    [self.loggingTextView addLine: @"greeble hoover ni bork\n"];
+    [self.loggingTextView addLine: @"Fnord Blorf!!\n"];
 } // viewDidLoad
 
 

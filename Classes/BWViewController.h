@@ -10,10 +10,12 @@
 
 @class BWTimeScrubberView;
 @class BWTouchTrackView;
+@class BWLoggingTextView;
 
 @interface BWViewController : UIViewController
 
 @property (nonatomic, weak) IBOutlet BWTimeScrubberView *timeScrubber;
 @property (nonatomic, weak) IBOutlet BWTouchTrackView *touchTrackView;
+@property (nonatomic, weak) IBOutlet BWLoggingTextView *loggingTextView;
 
 @end // BWViewController
