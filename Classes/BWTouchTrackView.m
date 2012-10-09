@@ -209,5 +209,17 @@ static const CGFloat kPromptTextSize = 36.0;
     return [[self alloc] initWithTouch: touch];
 } // thingFromUITouch
 
+- (NSString *) description {
+    static const char *phases[] = {
+        "began", "moved", "stationary", "ended", "cancelled"
+    };
+
+    NSString *desc = 
+        [NSString stringWithFormat: @"(%f (%s): %@)",
+                  self.timestamp, phases[self.phase],
+                  NSStringFromCGPoint(self.locationInView)];
+    return desc;
+
+} // description
 
 @end // BWTouchThing
