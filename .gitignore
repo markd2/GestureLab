@@ -12,6 +12,8 @@
 # Xcode droppings
 *.xcuserdatad
 *.xcuserdata
+*.xcworkspace
+*.xcuserstate
 
 # Excel droppings
 ~$*
