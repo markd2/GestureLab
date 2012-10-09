@@ -9,8 +9,9 @@
 #import "BWViewController.h"
 
 #import "BWTimeScrubberView.h"
+#import "BWTouchTrackView.h"
 
-@interface BWViewController () <BWTimeScrubberDelegate>
+@interface BWViewController () <BWTimeScrubberDelegate, BWTouchTrackViewDelegate>
 
 @end
 
@@ -24,16 +25,10 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
 
+    self.touchTrackView.delegate = self;
     self.timeScrubber.delegate = self;
     self.timeScrubber.totalDuration = 10.0;
-}
-
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
+} // viewDidLoad
 
 
 - (BOOL) shouldAutorotateToInterfaceOrientation: (UIInterfaceOrientation) direction {
@@ -44,6 +39,19 @@
 - (void) timeScrubber: (BWTimeScrubberView *) scrubbed
        scrubbedToTime: (NSTimeInterval) time {
 } // scrubbedToTime
+
+
+- (void) touchTrackBeganTracking: (BWTouchTrackView *) touchTrack {
+    self.timeScrubber.mode = kModeReadonly;
+} // touchTrackBeganTracking
+
+
+- (void) touchTrackEndedTracking: (BWTouchTrackView *) touchTrack {
+    self.timeScrubber.mode = kModeScrubbable;
+    self.timeScrubber.totalDuration = touchTrack.trackingDuration;
+    self.timeScrubber.currentTime = touchTrack.trackingDuration;
+} // touchTrackEndedTracking
+
 
 
 @end // BWViewController

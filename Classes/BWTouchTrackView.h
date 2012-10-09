@@ -1,7 +1,7 @@
 #import <UIKit/UIKit.h>
 
-static NSString *const BWTouchTrackView_TrackingBegan;
-static NSString *const BWTouchTrackView_TrackingEnded;
+
+@protocol BWTouchTrackViewDelegate;
 
 @interface BWTouchTrackView : UIView
 
@@ -10,4 +10,14 @@ static NSString *const BWTouchTrackView_TrackingEnded;
 
 @property (nonatomic, readonly) NSTimeInterval trackingDuration;
 
+@property (nonatomic, weak) id <BWTouchTrackViewDelegate> delegate;
+
 @end // BWTouchTackView
+
+
+@protocol BWTouchTrackViewDelegate <NSObject>
+
+- (void) touchTrackBeganTracking: (BWTouchTrackView *) touchTrack;
+- (void) touchTrackEndedTracking: (BWTouchTrackView *) touchTrack;
+
+@end // BWTouchTrackViewDelegate

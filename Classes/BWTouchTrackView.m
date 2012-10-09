@@ -12,7 +12,7 @@ static const CGFloat kPromptTextSize = 36.0;
 static const CGFloat kTrackLineWidth = 5.0;
 
 // How long to wait before returning to ready-to-track state.
-static const CGFloat kLastTouchTimeout = 2.0;
+static const CGFloat kLastTouchTimeout = 1.0;
 
 static UIColor *kTrackingBackgroundColor;
 
@@ -85,15 +85,6 @@ static UIColor *kTrackingBackgroundColor;
 } // initWithCoder
 
 
-- (void) postNotification: (NSString *) notificationName {
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center postNotificationName: notificationName
-            object: self];
-
-    NSLog (@"DIFF IS %f", self.trackingDuration);
-} // postNotification
-
-
 - (void) setState: (TrackingState) state {
     if (_state != state) {
         _state = state;
@@ -105,7 +96,7 @@ static UIColor *kTrackingBackgroundColor;
 // Triggered by performSelector/after delay
 - (void) finishedTracking {
     [self setState: kStateReadyToTrack];
-    [self postNotification: BWTouchTrackView_TrackingEnded];
+    [self.delegate touchTrackEndedTracking: self];
 } // finishedTracking
 
 
@@ -213,9 +204,8 @@ static UIColor *kTrackingBackgroundColor;
         self.startTimestamp = touch.timestamp;
         self.endTimestamp = touch.timestamp;
 
-        [self postNotification: BWTouchTrackView_TrackingBegan];
+        [self.delegate touchTrackBeganTracking: self];
     }
-
 
     NSValue *touchAddress = touch.bwAddressValue;
 

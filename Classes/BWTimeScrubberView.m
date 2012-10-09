@@ -11,6 +11,14 @@ static const CGFloat kTriangleBaseWidth = 30.0;
 } // setCurrentTime
 
 
+- (void) setMode: (BWTimeScrubberMode) mode {
+    if (_mode != mode) {
+        _mode = mode;
+        [self setNeedsDisplay];
+    }
+} // setMode
+
+
 - (void) drawPlayheadInRect: (CGRect) rect {
     CGFloat percentage = self.currentTime / self.totalDuration;
     CGFloat playheadPosition = rect.origin.x + rect.size.width * percentage;
@@ -33,10 +41,16 @@ static const CGFloat kTriangleBaseWidth = 30.0;
     CGRect bounds = self.bounds;
 
 
-    [[UIColor whiteColor] set];
+    if (self.mode == kModeReadonly) {
+        [[UIColor lightGrayColor] set];
+    } else if (self.mode == kModeScrubbable) {
+        [[UIColor whiteColor] set];
+    }
     UIRectFill(bounds);
 
-    [self drawPlayheadInRect: bounds];
+    if (self.mode == kModeScrubbable) {
+        [self drawPlayheadInRect: bounds];
+    }
 
     [[UIColor blackColor] set];
     UIRectFrame(bounds);
