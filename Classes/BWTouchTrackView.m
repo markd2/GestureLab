@@ -1,6 +1,7 @@
 #import "BWTouchTrackView.h"
 
 #import "NSObject+AddressValue.h"
+#import "UIColor+AddressColor.h"
 
 typedef enum : NSInteger {
     kStateReadyToTrack,
@@ -8,7 +9,7 @@ typedef enum : NSInteger {
 } TrackingState;
 
 static const CGFloat kPromptTextSize = 36.0;
-
+static const CGFloat kTrackLineWidth = 5.0;
 
 @interface BWTouchTrackView () {
     TrackingState _state;
@@ -92,6 +93,35 @@ static const CGFloat kPromptTextSize = 36.0;
 } // drawPromptTextInRect
 
 
+- (void) drawTracks {
+    // Keys are the nsvalue-wrapped UITouch, the value is a mutable array of Things.
+
+    [_touchTracks enumerateKeysAndObjectsUsingBlock: ^(id key, id value, BOOL *stop) {
+            UIBezierPath *path = [UIBezierPath bezierPath];
+            for (BWTouchThing *thing in value) {
+                switch (thing.phase) {
+                case UITouchPhaseBegan:
+                    [path moveToPoint: thing.locationInView];
+                    break;
+
+                case UITouchPhaseStationary:
+                case UITouchPhaseMoved:
+                case UITouchPhaseEnded:
+                case UITouchPhaseCancelled:
+                    [path addLineToPoint: thing.locationInView];
+                    break;
+                }
+            }
+            UIColor *color = [UIColor bwColorWithAddress: key];
+            [color set];
+            path.lineWidth = kTrackLineWidth;
+            path.lineJoinStyle = kCGLineJoinRound;
+            path.lineCapStyle = kCGLineCapRound;
+            [path stroke];
+        }];
+} // drawTracks
+
+
 - (void) drawFrame: (CGRect) rect {
     [[UIColor blackColor] set];
     UIRectFrame (rect);
@@ -104,6 +134,8 @@ static const CGFloat kPromptTextSize = 36.0;
 
     [self drawBackground: bounds];
     [self drawPromptTextInRect: bounds];
+
+    [self drawTracks];
     [self drawFrame: bounds];
 
 } // drawRect
@@ -132,7 +164,7 @@ static const CGFloat kPromptTextSize = 36.0;
     [_touchesInFlight removeObject: touch.bwAddressValue];
 
     if (_touchesInFlight.count == 0) {
-        NSLog (@"SNORK %@", _touchTracks);
+        [self setNeedsDisplay];
     }
 } // stopTrackingTouch
 
