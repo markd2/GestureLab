@@ -51,7 +51,6 @@
     self.timeScrubber.mode = kModeScrubbable;
     self.timeScrubber.totalDuration = touchTrack.trackingDuration;
     self.timeScrubber.currentTime = touchTrack.trackingDuration;
-    NSLog (@"huh? %f", touchTrack.trackingDuration);
 } // touchTrackEndedTracking
 
 
