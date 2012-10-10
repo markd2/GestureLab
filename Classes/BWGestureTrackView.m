@@ -2,7 +2,16 @@
 
 #import "QuietLog.h"
 
+#import "NSObject+AddressValue.h"
 #import "UIColor+AddressColor.h"
+
+
+static const CGFloat kRecognizerHeight = 30.0;
+static const CGFloat kLabelTextSize = 15.0; 
+
+// How long to wait before returning to ready-to-track state.
+static const CGFloat kLastTouchTimeout = 1.0;
+
 
 @interface BWGestureTrackView () {
     BOOL _recording;
@@ -15,11 +24,16 @@
 
 @end // extension
 
-static const CGFloat kRecognizerHeight = 30.0;
-static const CGFloat kLabelTextSize = 15.0; 
+@interface BWGestureThing : NSObject
+@property (nonatomic, strong) UIGestureRecognizer *recognizer;
+@property (nonatomic, assign) UIGestureRecognizerState state;
+@property (nonatomic, assign) NSTimeInterval timestamp;  // absolute time
 
-// How long to wait before returning to ready-to-track state.
-static const CGFloat kLastTouchTimeout = 1.0;
++ (id) thingFromGesture: (UIGestureRecognizer *) gesture
+                  state: (UIGestureRecognizerState) state;
+
+@end // BWGestureThing
+
 
 @implementation BWGestureTrackView
 
@@ -83,6 +97,7 @@ static const CGFloat kLastTouchTimeout = 1.0;
 
 - (void) notifyDelegateAllDone {
     [self.delegate trackViewCompletedLastRecognizer: self];
+    QuietLog (@"HOOVER %@", _recordedActions);
 } // notifyDelegateAllDone
 
 
@@ -99,8 +114,9 @@ static const CGFloat kLastTouchTimeout = 1.0;
 
         [self recordState: state  forRecognizer: object];
 
-        if (   state == UIGestureRecognizerStateEnded // a.k. recognized
-            || state == UIGestureRecognizerStateFailed) {
+        if (   state == UIGestureRecognizerStateEnded // a.k.a. recognized
+            || state == UIGestureRecognizerStateFailed
+            || state == UIGestureRecognizerStateCancelled) {
 
             [_recognizersInFlight removeObject: object];
 
@@ -109,6 +125,12 @@ static const CGFloat kLastTouchTimeout = 1.0;
                       withObject: nil
                       afterDelay: kLastTouchTimeout];
             }
+
+            // The reset to possible state isn't being done in a KVOable manner,
+            // so assume it returns to possible when reaching a terminal state.
+            [self recordState: UIGestureRecognizerStatePossible
+                  forRecognizer: object];
+
 
         } else {
             // It's possible for a recognizer to go from done to back alive
@@ -129,17 +151,29 @@ static const CGFloat kLastTouchTimeout = 1.0;
 } // observeValueForKeyPath
 
 
+static const char *g_stateNames[] = {
+    "possible",
+    "began",
+    "changed",
+    "recognized / ended",
+    "cancelled",
+    "failed"
+};
+
 - (void) recordState: (UIGestureRecognizerState) state
        forRecognizer: (UIGestureRecognizer *) recognizer {
 
-    static const char *g_stateNames[] = {
-        "possible",
-        "began",
-        "changed",
-        "recognized / ended",
-        "cancelled",
-        "failed"
-    };
+    NSValue *key = recognizer.bwAddressValue;
+    NSMutableArray *track = [_recordedActions objectForKey: key];
+
+    if (track == nil) {
+        track = [NSMutableArray array];
+        [_recordedActions setObject: track  forKey: key];
+    }
+    
+    BWGestureThing *thing = [BWGestureThing thingFromGesture: recognizer
+                                            state: state];
+    [track addObject: thing];
 
     QuietLog (@"%@ -> %s", [recognizer class], g_stateNames[state]);
 
@@ -236,3 +270,36 @@ static const CGFloat kLastTouchTimeout = 1.0;
 
 @end // BWGestureTrackView
 
+
+@implementation BWGestureThing
+
+- (id) initWithGesture: (UIGestureRecognizer *) recognizer
+                 state: (UIGestureRecognizerState) state {
+
+    if ((self = [super init])) {
+        _recognizer = recognizer;
+        _state = state;
+        _timestamp = [NSDate timeIntervalSinceReferenceDate];
+    }
+
+    return self;
+
+} // initWithGesture
+
+
++ (id) thingFromGesture: (UIGestureRecognizer *) recognizer
+                  state: (UIGestureRecognizerState) state {
+    return [[self alloc] initWithGesture: recognizer
+                         state: state];
+} // thingFromGesture
+
+
+- (NSString *) description {
+    NSString *description =
+        [NSString stringWithFormat: @"(%f %@ -> %s)",
+                  self.timestamp, self.recognizer, g_stateNames[self.state]];
+    return description;
+
+} // description
+
+@end // BWGestureThing
