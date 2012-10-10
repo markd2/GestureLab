@@ -11,7 +11,7 @@ typedef enum : NSInteger {
     kStateScrolledDrawback
 } TrackingState;
 
-static const BOOL kLogTouchActivity = NO;  // Sometimes can be too chatty.
+static const BOOL kLogTouchActivity = YES;  // Sometimes can be too chatty.
 
 static const CGFloat kPromptTextSize = 36.0;
 static const CGFloat kTrackLineWidth = 5.0;
@@ -295,6 +295,12 @@ static UIColor *kTrackingBackgroundColor;
 
     NSValue *touchAddress = touch.bwAddressValue;
     NSMutableArray *track = [_touchTracks objectForKey: touchAddress];
+    if (!track) {
+        // The recognizer has canceled this touch (probably) before we saw the
+        // 'began'
+        [self startTrackingTouch: touch];
+        track = [_touchTracks objectForKey: touchAddress];
+    }
     assert (track);
 
     BWTouchThing *thing = [BWTouchThing thingFromUITouch: touch];
@@ -338,10 +344,16 @@ static UIColor *kTrackingBackgroundColor;
 
 - (void) touchesCancelled: (NSSet *) touches  withEvent: (UIEvent *) event {
     for (UITouch *touch in touches) {
+        // Log them all without worrying about the track going away.
         [self trackTouch: touch];
+    }
+
+    if (kLogTouchActivity) QuietLog (@"cancelled");
+
+    for (UITouch *touch in touches) {
         [self stopTrackingTouch: touch];
     }
-    if (kLogTouchActivity) QuietLog (@"cancelled");
+
 } // touchesCancelled
 
 @end // BWTouchView
