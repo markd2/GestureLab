@@ -8,6 +8,9 @@
 
 @property (nonatomic, weak) id <BWGestureTrackViewDelegate> delegate;
 
+@property (nonatomic, assign) NSTimeInterval totalDuration;
+@property (nonatomic, assign) NSTimeInterval currentTime; // clamped to totalDuration
+
 - (void) removeAllRecognizers;
 - (void) trackGestureRecognizer: (UIGestureRecognizer *) gestureRecognizer;
 

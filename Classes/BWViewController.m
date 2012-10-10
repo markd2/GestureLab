@@ -95,9 +95,15 @@
 - (void) touchTrackEndedTracking: (BWTouchTrackView *) touchTrack {
     // TODO(markd): move to common "end recording" place.
     self.timeScrubber.mode = kModeScrubbable;
+
     self.timeScrubber.totalDuration = touchTrack.trackingDuration;
     self.timeScrubber.currentTime = touchTrack.trackingDuration;
+
+    self.gestureTrackView.totalDuration = touchTrack.trackingDuration;
+    self.gestureTrackView.currentTime = touchTrack.trackingDuration;
+
     [self.gestureTrackView stopRecording];
+
 } // touchTrackEndedTracking
 
 

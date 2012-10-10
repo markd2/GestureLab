@@ -7,6 +7,7 @@
 
 
 static const CGFloat kRecognizerHeight = 30.0;
+static const CGFloat kLabelWidth = 200;
 static const CGFloat kLabelTextSize = 15.0; 
 
 // How long to wait before returning to ready-to-track state.
@@ -63,6 +64,12 @@ static const CGFloat kLastTouchTimeout = 1.0;
     return self;
 
 } // initWithCoder
+
+
+- (void) setCurrentTime: (NSTimeInterval) currentTime {
+    _currentTime = MIN (currentTime, self.totalDuration);
+    [self setNeedsDisplay];
+} // setCurrentTime
 
 
 - (void) removeAllRecognizers {
@@ -221,7 +228,7 @@ static const char *g_stateNames[] = {
 
     CGSize textSize = [text sizeWithFont: font
                             constrainedToSize: rect.size
-                            lineBreakMode: UILineBreakModeWordWrap];
+                            lineBreakMode: UILineBreakModeTailTruncation];
     
     CGRect textRect = CGRectMake (CGRectGetMidX(rect) - textSize.width / 2.0,
                                   CGRectGetMidY(rect) - textSize.height / 2.0,
@@ -235,7 +242,7 @@ static const char *g_stateNames[] = {
 
     [text drawInRect: textRect
             withFont: font
-            lineBreakMode: UILineBreakModeWordWrap
+            lineBreakMode: UILineBreakModeTailTruncation
             alignment: UITextAlignmentCenter];
 
 } // drawText
@@ -246,14 +253,24 @@ static const char *g_stateNames[] = {
                                         rect.size.width, kRecognizerHeight);
 
     for (UIGestureRecognizer *recognizer in _recognizers) {
-        recognizerRect.origin.y += kRecognizerHeight;
         UIColor *color = [UIColor bwColorWithAddress: recognizer];
         [color set];
         UIRectFill (recognizerRect);
 
+        CGRect labelRect = recognizerRect;
+        labelRect.size.width = kLabelWidth;
         [self drawText: [[recognizer class] description]
-              inRect: recognizerRect];
+              inRect: labelRect];
+
+        recognizerRect.origin.y += kRecognizerHeight;
     }
+
+    UIBezierPath *bezierPath = [UIBezierPath bezierPath];
+    [bezierPath moveToPoint: CGPointMake(rect.origin.x + kLabelWidth, rect.origin.y)];
+    [bezierPath addLineToPoint: CGPointMake(rect.origin.x + kLabelWidth,
+                                            kRecognizerHeight * _recognizers.count)];
+    [[UIColor blackColor] set];
+    [bezierPath stroke];
 
 } // drawRecognizersInRect
 
