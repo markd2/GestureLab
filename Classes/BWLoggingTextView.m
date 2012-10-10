@@ -3,8 +3,7 @@
 #import <QuartzCore/QuartzCore.h>  // For layer styles
 
 
-// TODO(markd): use different pipes for stdout / stderr, and forward stuff from
-//              the hijacked pipes to the new ones.
+// TODO(markd) : add unhijack, at least before blog posting.
 
 @interface BWLoggingTextView () {
     NSMutableString *_contents;
@@ -12,6 +11,7 @@
     int _oldStandardError;
 
     int _standardOutPipe[2];
+    int _standardErrorPipe[2];
 
     NSTimeInterval _startTimestamp;
     NSMutableArray *_lines;
@@ -35,12 +35,21 @@ static NSString * const kTimestampFormat = @"%.2f: ";
 @implementation BWLoggingTextView
 
 static void ReceiveMessage (CFSocketRef socket, CFSocketCallBackType type,
-                            CFDataRef address, const void *data, void *info) {
-    NSString *string = [[NSString alloc] initWithData: (__bridge NSData *) data
+                            CFDataRef address, const void *cfdata, void *info) {
+    NSData *data = (__bridge NSData *) cfdata;
+
+    NSString *string = [[NSString alloc] initWithData: data
                                          encoding: NSUTF8StringEncoding];
     BWLoggingTextView *self = (__bridge BWLoggingTextView *) info;
 
     [self addLine: string];
+
+    // Now forward on to its original destination.
+    if (CFSocketGetNative(socket) == self->_standardOutPipe[kReadSide]) {
+        write (self->_oldStandardOut, data.bytes, data.length);
+    } else if (CFSocketGetNative(socket) == self->_standardErrorPipe[kReadSide]) {
+        write (self->_oldStandardError, data.bytes, data.length);
+    }
 
 } // ReceiveMessage
 
@@ -74,31 +83,40 @@ bailout:
 } // startMonitoringSocket
 
 
-- (void) hijackStandardOut {
+- (void) hijackOutStreams {
     int result;
+
     result = pipe (_standardOutPipe);
     if (result == -1) {
-        NSLog (@"could not make a pipe for standard out");
+        assert (!"could not make a pipe for standard out");
+        return;
+    }
+
+    result = pipe (_standardErrorPipe);
+    if (result == -1) {
+        assert (!"could not make a pipe for standard error");
         return;
     }
 
     // save off the existing fd's for eventual reconnecting.
     _oldStandardOut = dup (fileno(stdout));
     _oldStandardError = dup (fileno(stderr));
+
     setbuf (stdout, NULL);  // Turn off buffering
     setbuf (stderr, NULL);  // Turn off buffering
 
     dup2 (_standardOutPipe[kWriteSide], fileno(stdout));
-    dup2 (_standardOutPipe[kWriteSide], fileno(stderr));
+    dup2 (_standardErrorPipe[kWriteSide], fileno(stderr));
 
     // Add the read side to the runloop.
     [self startMonitoringSocket: _standardOutPipe[kReadSide]];
+    [self startMonitoringSocket: _standardErrorPipe[kReadSide]];
 
-} // hijackStandardOut
+} // hijackOutStreams
 
 
 - (void) commonInit {
-    [self hijackStandardOut];
+    [self hijackOutStreams];
 
     _contents = [NSMutableString string];
     _lines = [NSMutableArray array];
