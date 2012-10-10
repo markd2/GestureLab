@@ -5,8 +5,12 @@
 #import "UIColor+AddressColor.h"
 
 @interface BWGestureTrackView () {
-    NSMutableArray *_recognizers;
     BOOL _recording;
+    NSTimeInterval _startTimestamp;
+
+    NSMutableArray *_recognizers;
+    NSMutableSet *_recognizersInFlight;
+    NSMutableDictionary *_recordedActions;
 }
 
 @end // extension
@@ -14,11 +18,16 @@
 static const CGFloat kRecognizerHeight = 30.0;
 static const CGFloat kLabelTextSize = 15.0; 
 
+// How long to wait before returning to ready-to-track state.
+static const CGFloat kLastTouchTimeout = 1.0;
+
 @implementation BWGestureTrackView
 
 
 - (void) commonInit {
     _recognizers = [NSMutableArray array];
+    _recognizersInFlight = [NSMutableSet set];
+    _recordedActions = [NSMutableDictionary dictionary];
 } // commonInit
 
 
@@ -56,7 +65,6 @@ static const CGFloat kLabelTextSize = 15.0;
 
 
 - (void) startWatchingRecognizer: (UIGestureRecognizer *) recognizer {
-
     [recognizer addObserver: self
                 forKeyPath: @"state"
                 options: NSKeyValueObservingOptionNew
@@ -69,17 +77,13 @@ static const CGFloat kLabelTextSize = 15.0;
     [recognizer removeObserver: self
                 forKeyPath: @"state"
                 context: (__bridge void *) self];
+
 } // stopWatchingRecognizer
 
 
-static const char *g_stateNames[] = {
-    "possible",
-    "began",
-    "changed",
-    "recognized / ended",
-    "cancelled",
-    "failed"
-};
+- (void) notifyDelegateAllDone {
+    [self.delegate trackViewCompletedLastRecognizer: self];
+} // notifyDelegateAllDone
 
 
 - (void) observeValueForKeyPath: (NSString *) keyPath
@@ -89,10 +93,32 @@ static const char *g_stateNames[] = {
 
     if (context == (__bridge void *)self
         && [keyPath isEqualToString: @"state"]) {
-        NSNumber *state = change[@"new"];
-        QuietLog (@"Observed - %@'s state is %s", 
-                  [object class],
-                  g_stateNames[state.integerValue]);
+
+        NSNumber *stateNumber = change[@"new"];
+        UIGestureRecognizerState state = stateNumber.integerValue;
+
+        [self recordState: state  forRecognizer: object];
+
+        if (   state == UIGestureRecognizerStateEnded // a.k. recognized
+            || state == UIGestureRecognizerStateFailed) {
+
+            [_recognizersInFlight removeObject: object];
+
+            if (_recognizersInFlight.count == 0) {
+                [self performSelector: @selector(notifyDelegateAllDone)
+                      withObject: nil
+                      afterDelay: kLastTouchTimeout];
+            }
+
+        } else {
+            // It's possible for a recognizer to go from done to back alive
+            // during a logical gesture event recording session, so add in-flights
+            // back in.
+            [_recognizersInFlight addObject: object];
+            [NSObject cancelPreviousPerformRequestsWithTarget: self
+                      selector: @selector(notifyDelegateAllDone)
+                      object: nil];
+        }
 
     } else {
         [super observeValueForKeyPath: keyPath
@@ -103,6 +129,42 @@ static const char *g_stateNames[] = {
 } // observeValueForKeyPath
 
 
+- (void) recordState: (UIGestureRecognizerState) state
+       forRecognizer: (UIGestureRecognizer *) recognizer {
+
+    static const char *g_stateNames[] = {
+        "possible",
+        "began",
+        "changed",
+        "recognized / ended",
+        "cancelled",
+        "failed"
+    };
+
+    QuietLog (@"%@ -> %s", [recognizer class], g_stateNames[state]);
+
+} // recordState
+
+
+- (void) startRecording {
+    [_recognizersInFlight removeAllObjects];
+    [_recordedActions removeAllObjects];
+
+    _recording = YES;
+    _startTimestamp = [NSDate timeIntervalSinceReferenceDate];
+
+    for (UIGestureRecognizer *recognizer in _recognizers) {
+        [_recognizersInFlight addObject: recognizer];
+        [self recordState: UIGestureRecognizerStatePossible
+              forRecognizer: recognizer];
+    }
+
+} // startRecording
+
+
+- (void) stopRecording {
+    _recording = YES;
+} // stopRecording
 
 
 // --------------------------------------------------

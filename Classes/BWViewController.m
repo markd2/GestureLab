@@ -16,7 +16,8 @@
 #import "QuietLog.h"
 
 
-@interface BWViewController () <BWTimeScrubberDelegate, BWTouchTrackViewDelegate>
+@interface BWViewController () <BWTimeScrubberDelegate,
+    BWTouchTrackViewDelegate, BWGestureTrackViewDelegate>
 
 @end
 
@@ -31,6 +32,7 @@
 	// Do any additional setup after loading the view, typically from a nib.
 
     self.touchTrackView.delegate = self;
+    self.gestureTrackView.delegate = self;
     self.timeScrubber.delegate = self;
     self.timeScrubber.totalDuration = 0.0;
 
@@ -47,25 +49,6 @@
     return UIInterfaceOrientationIsLandscape(direction);
 } // shouldAutorotate
 
-
-- (void) timeScrubber: (BWTimeScrubberView *) scrubbed
-       scrubbedToTime: (NSTimeInterval) time {
-    [self.touchTrackView drawUpToTimestamp: time];
-    [self.loggingTextView displayToTimestamp: time];
-} // scrubbedToTime
-
-
-- (void) touchTrackBeganTracking: (BWTouchTrackView *) touchTrack {
-    self.timeScrubber.mode = kModeReadonly;
-    [self.loggingTextView clear];
-} // touchTrackBeganTracking
-
-
-- (void) touchTrackEndedTracking: (BWTouchTrackView *) touchTrack {
-    self.timeScrubber.mode = kModeScrubbable;
-    self.timeScrubber.totalDuration = touchTrack.trackingDuration;
-    self.timeScrubber.currentTime = touchTrack.trackingDuration;
-} // touchTrackEndedTracking
 
 
 - (void) addSomeGestures {
@@ -93,6 +76,34 @@
     [self.gestureTrackView trackGestureRecognizer: pinchy];
 
 } // addSomeGestures
+
+
+- (void) timeScrubber: (BWTimeScrubberView *) scrubbed
+       scrubbedToTime: (NSTimeInterval) time {
+    [self.touchTrackView drawUpToTimestamp: time];
+    [self.loggingTextView displayToTimestamp: time];
+} // scrubbedToTime
+
+
+- (void) touchTrackBeganTracking: (BWTouchTrackView *) touchTrack {
+    self.timeScrubber.mode = kModeReadonly;
+    [self.loggingTextView clear];
+    [self.gestureTrackView startRecording];
+} // touchTrackBeganTracking
+
+
+- (void) touchTrackEndedTracking: (BWTouchTrackView *) touchTrack {
+    // TODO(markd): move to common "end recording" place.
+    self.timeScrubber.mode = kModeScrubbable;
+    self.timeScrubber.totalDuration = touchTrack.trackingDuration;
+    self.timeScrubber.currentTime = touchTrack.trackingDuration;
+    [self.gestureTrackView stopRecording];
+} // touchTrackEndedTracking
+
+
+- (void) trackViewCompletedLastRecognizer: (BWGestureTrackView *) trackView {
+    QuietLog (@"ALL DONE!");
+} // trackViewCompletedLastRecognizer
 
 
 @end // BWViewController
