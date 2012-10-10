@@ -1,6 +1,6 @@
 Different moving parts:
 
-* View that shows the tracks of the touches
+o View that shows the tracks of the touches
 * Proxy that wraps gesture recognizers that broadcasts when it receives gestures and
   state changes
 * Timeline that increases as the gesture drag happens (like instrumentst™)
@@ -9,8 +9,9 @@ Different moving parts:
   * as the gesture is in flight, show the different states (maybe by line pattern, or
     text label)
   * Let the user set 'must fail', and associated gizmos
-* Scrubber, to play back the gesture as it happened
-* (stretch) text view that shows NSLogs as they happen
+o Done - Scrubber, to play back the gesture as it happened
+  * need to make it look purty
+o Done - text view that shows NSLogs as they happen
 
 * Support all the apple gesture recognizers
 * Find some from books and the intertubes
