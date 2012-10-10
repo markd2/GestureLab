@@ -19,6 +19,8 @@
 
 enum { kReadSide, kWriteSide };  // The two side to every pipe()
 
+static NSString * const kTimestampFormat = @"%.2f: ";
+
 
 @interface BWLogEntry : NSObject
 @property (nonatomic, assign) NSTimeInterval timestamp;
@@ -122,11 +124,13 @@ bailout:
     if (_contents == nil) _contents = [NSMutableString string];
     if (_lines == nil) _lines = [NSMutableArray array];
 
-    [_contents appendString: line];
-    self.text = _contents;
-
     BWLogEntry *entry = [BWLogEntry entryWithLine: line];
     [_lines addObject: entry];
+
+    NSTimeInterval now = entry.timestamp - _startTimestamp;
+    [_contents appendFormat: kTimestampFormat, now];
+    [_contents appendString: line];
+    self.text = _contents;
 
     [self scrollToEnd];
 
@@ -147,9 +151,13 @@ bailout:
 
     [_contents setString: @""];
 
-    for (BWLogEntry *line in _lines) {
-        if (line.timestamp > adjustedTimestamp) break;
-        [_contents appendString: line.line];
+    for (BWLogEntry *entry in _lines) {
+        if (entry.timestamp > adjustedTimestamp) break;
+
+        NSTimeInterval now = entry.timestamp - _startTimestamp;
+        [_contents appendFormat: kTimestampFormat, now];
+
+        [_contents appendString: entry.line];
     }
 
     self.text = _contents;
