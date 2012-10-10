@@ -3,6 +3,8 @@
 #import "NSObject+AddressValue.h"
 #import "UIColor+AddressColor.h"
 
+#import "QuietLog.h"
+
 typedef enum : NSInteger {
     kStateReadyToTrack,
     kStateTracking,
@@ -312,7 +314,7 @@ static UIColor *kTrackingBackgroundColor;
         [self trackTouch: touch];
     }
 
-    NSLog (@"BEGAN! %@", touches);
+    QuietLog (@"BEGAN! %@", touches);
 } // touchesBegan
 
 
