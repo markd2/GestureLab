@@ -2,11 +2,16 @@
 
 #import "QuietLog.h"
 
+#import "UIColor+AddressColor.h"
+
 @interface BWGestureTrackView () {
     NSMutableArray *_recognizers;
 }
 
 @end // extension
+
+static const CGFloat kRecognizerHeight = 30.0;
+static const CGFloat kLabelTextSize = 15.0; 
 
 @implementation BWGestureTrackView
 
@@ -36,26 +41,80 @@
 } // initWithCoder
 
 
-- (void) addGestureRecognizer: (UIGestureRecognizer *) gestureRecognizer {
+- (void) removeAllRecognizers {
+    [_recognizers removeAllObjects];
+} // removeAllRecognizers
+
+
+- (void) trackGestureRecognizer: (UIGestureRecognizer *) gestureRecognizer {
     [_recognizers addObject: gestureRecognizer];
     [self setNeedsDisplay];
 
-} // addGestureRecognizer
+} // trackGestureRecognizer
+
+
+- (void) drawBackground: (CGRect) rect {
+    [[UIColor whiteColor] set];
+    UIRectFill (rect);
+} // drawBackground
+
+
+- (void) drawFrame: (CGRect) rect {
+    [[UIColor blackColor] set];
+    UIRectFrame (rect);
+} // drawFrame
+
+
+- (void) drawText: (NSString *) text
+           inRect: (CGRect) rect {
+    UIFont *font = [UIFont boldSystemFontOfSize: kLabelTextSize];
+
+    CGSize textSize = [text sizeWithFont: font
+                            constrainedToSize: rect.size
+                            lineBreakMode: UILineBreakModeWordWrap];
+    
+    CGRect textRect = CGRectMake (CGRectGetMidX(rect) - textSize.width / 2.0,
+                                  CGRectGetMidY(rect) - textSize.height / 2.0,
+                                  textSize.width, textSize.height);
+
+    [[UIColor whiteColor] set];
+
+    if ([text hasSuffix: @"GestureRecognizer"]) {
+        text = [text substringToIndex: text.length - @"GestureRecognizer".length];
+    }
+
+    [text drawInRect: textRect
+            withFont: font
+            lineBreakMode: UILineBreakModeWordWrap
+            alignment: UITextAlignmentCenter];
+
+} // drawText
+
+
+- (void) drawRecognizersInRect: (CGRect) rect {
+    CGRect recognizerRect = CGRectMake (rect.origin.x, rect.origin.y,
+                                        rect.size.width, kRecognizerHeight);
+
+    for (UIGestureRecognizer *recognizer in _recognizers) {
+        recognizerRect.origin.y += kRecognizerHeight;
+        UIColor *color = [UIColor bwColorWithAddress: recognizer];
+        [color set];
+        UIRectFill (recognizerRect);
+
+        [self drawText: [[recognizer class] description]
+              inRect: recognizerRect];
+    }
+
+} // drawRecognizersInRect
 
 
 - (void) drawRect: (CGRect) rect {
     CGRect bounds = self.bounds;
 
-    UIColor *color = [UIColor colorWithRed: (((int)self >> 0) & 0xFF) / 255.0
-                              green: (((int)self >> 8) & 0xFF) / 255.0
-                              blue: (((int)self >> 16) & 0xFF) / 255.0
-                              alpha: 1.0];
+    [self drawBackground: bounds];
+    [self drawRecognizersInRect: rect];
+    [self drawFrame: bounds];
 
-    [color set];
-    UIRectFill(bounds);
-
-    [[UIColor blackColor] set];
-    UIRectFrame(bounds);
 } // drawRect
 
 

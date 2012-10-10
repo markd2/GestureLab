@@ -8,6 +8,7 @@
 
 #import "BWViewController.h"
 
+#import "BWGestureTrackView.h"
 #import "BWLoggingTextView.h"
 #import "BWTimeScrubberView.h"
 #import "BWTouchTrackView.h"
@@ -69,10 +70,29 @@
 
 - (void) addSomeGestures {
     UILongPressGestureRecognizer *longPress =
-        [[UILongPressGestureRecognizer alloc] initWithTarget: self
-                                              action: @selector(gronk:)];
+        [[UILongPressGestureRecognizer alloc] initWithTarget: nil
+                                              action: @selector(longPress:)];
 
+    UITapGestureRecognizer *twoTap =
+        [[UITapGestureRecognizer alloc] initWithTarget: nil
+                                        action: @selector(twoTap:)];
+    twoTap.numberOfTapsRequired = 2;
+    twoTap.numberOfTouchesRequired = 2;
+
+    UIPinchGestureRecognizer *pinchy =
+        [[UIPinchGestureRecognizer alloc] initWithTarget: nil
+                                          action: @selector(iPinchYou:)];
+    
     [self.touchTrackView addGestureRecognizer: longPress];
+    [self.touchTrackView addGestureRecognizer: twoTap];
+    [self.touchTrackView addGestureRecognizer: pinchy];
+
+    [self.gestureTrackView removeAllRecognizers];
+    [self.gestureTrackView trackGestureRecognizer: longPress];
+    [self.gestureTrackView trackGestureRecognizer: twoTap];
+    [self.gestureTrackView trackGestureRecognizer: pinchy];
+
+
     [longPress addObserver: self
                forKeyPath: @"state"
                options: NSKeyValueObservingOptionNew

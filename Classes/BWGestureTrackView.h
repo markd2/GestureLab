@@ -4,6 +4,7 @@
 
 @interface BWGestureTrackView : UIView
 
-- (void) addGestureRecognizer: (UIGestureRecognizer *) gestureRecognizer;
+- (void) removeAllRecognizers;
+- (void) trackGestureRecognizer: (UIGestureRecognizer *) gestureRecognizer;
 
 @end // BWGestureTrackView
