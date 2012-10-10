@@ -11,6 +11,8 @@ typedef enum : NSInteger {
     kStateScrolledDrawback
 } TrackingState;
 
+static const BOOL kLogTouchActivity = NO;  // Sometimes can be too chatty.
+
 static const CGFloat kPromptTextSize = 36.0;
 static const CGFloat kTrackLineWidth = 5.0;
 
@@ -313,7 +315,7 @@ static UIColor *kTrackingBackgroundColor;
         [self startTrackingTouch: touch];
         [self trackTouch: touch];
     }
-    QuietLog (@"began");
+    if (kLogTouchActivity) QuietLog (@"began");
 } // touchesBegan
 
 
@@ -321,7 +323,7 @@ static UIColor *kTrackingBackgroundColor;
     for (UITouch *touch in touches) {
         [self trackTouch: touch];
     }
-    QuietLog (@"moved");
+    if (kLogTouchActivity) QuietLog (@"moved");
 } // touchesMoved
 
 
@@ -330,7 +332,7 @@ static UIColor *kTrackingBackgroundColor;
         [self trackTouch: touch];
         [self stopTrackingTouch: touch];
     }
-    QuietLog (@"ended");
+    if (kLogTouchActivity) QuietLog (@"ended");
 } // touchesEnded
 
 
@@ -339,7 +341,7 @@ static UIColor *kTrackingBackgroundColor;
         [self trackTouch: touch];
         [self stopTrackingTouch: touch];
     }
-    QuietLog (@"cancelled");
+    if (kLogTouchActivity) QuietLog (@"cancelled");
 } // touchesCancelled
 
 @end // BWTouchView
