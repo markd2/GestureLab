@@ -313,8 +313,6 @@ static UIColor *kTrackingBackgroundColor;
         [self startTrackingTouch: touch];
         [self trackTouch: touch];
     }
-
-    QuietLog (@"BEGAN! %@", touches);
 } // touchesBegan
 
 
