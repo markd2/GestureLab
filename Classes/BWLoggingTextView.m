@@ -1,5 +1,8 @@
 #import "BWLoggingTextView.h"
 
+#import <QuartzCore/QuartzCore.h>  // For layer styles
+
+
 // TODO(markd): use different pipes for stdout / stderr, and forward stuff from
 //              the hijacked pipes to the new ones.
 
@@ -94,9 +97,21 @@ bailout:
 } // hijackStandardOut
 
 
+- (void) commonInit {
+    [self hijackStandardOut];
+
+    _contents = [NSMutableString string];
+    _lines = [NSMutableArray array];
+
+    self.layer.borderWidth = 1.0f;
+    self.layer.borderColor = [UIColor blackColor].CGColor;
+
+} // commonInit
+
+
 - (id) initWithFrame: (CGRect) frame {
     if ((self = [super initWithFrame: frame])) {
-        [self hijackStandardOut];
+        [self commonInit];
     }
     
     return self;
@@ -106,7 +121,7 @@ bailout:
 
 - (id) initWithCoder: (NSCoder *) decoder {
     if ((self = [super initWithCoder: decoder])) {
-        [self hijackStandardOut];
+        [self commonInit];
     }
     
     return self;
@@ -121,9 +136,6 @@ bailout:
 
 
 - (void) addLine: (NSString *) line {
-    if (_contents == nil) _contents = [NSMutableString string];
-    if (_lines == nil) _lines = [NSMutableArray array];
-
     BWLogEntry *entry = [BWLogEntry entryWithLine: line];
     [_lines addObject: entry];
 
