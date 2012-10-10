@@ -22,6 +22,7 @@
 		7D28FBCD1624B79100AEF374 /* BWTimeScrubberView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBCC1624B79100AEF374 /* BWTimeScrubberView.m */; };
 		7D28FBD01624C8FA00AEF374 /* BWLoggingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBCF1624C8FA00AEF374 /* BWLoggingTextView.m */; };
 		7D28FBD31625E93F00AEF374 /* QuietLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBD21625E93F00AEF374 /* QuietLog.m */; };
+		7D28FBD61625FC0C00AEF374 /* BWGestureTrackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBD51625FC0C00AEF374 /* BWGestureTrackView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +52,8 @@
 		7D28FBCF1624C8FA00AEF374 /* BWLoggingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWLoggingTextView.m; path = Classes/BWLoggingTextView.m; sourceTree = SOURCE_ROOT; };
 		7D28FBD11625E93F00AEF374 /* QuietLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuietLog.h; path = Classes/QuietLog.h; sourceTree = SOURCE_ROOT; };
 		7D28FBD21625E93F00AEF374 /* QuietLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QuietLog.m; path = Classes/QuietLog.m; sourceTree = SOURCE_ROOT; };
+		7D28FBD41625FC0C00AEF374 /* BWGestureTrackView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BWGestureTrackView.h; path = Classes/BWGestureTrackView.h; sourceTree = SOURCE_ROOT; };
+		7D28FBD51625FC0C00AEF374 /* BWGestureTrackView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWGestureTrackView.m; path = Classes/BWGestureTrackView.m; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +104,8 @@
 				7D28FBC21624961700AEF374 /* BWTouchTrackView.m */,
 				7D28FBCB1624B79000AEF374 /* BWTimeScrubberView.h */,
 				7D28FBCC1624B79100AEF374 /* BWTimeScrubberView.m */,
+				7D28FBD41625FC0C00AEF374 /* BWGestureTrackView.h */,
+				7D28FBD51625FC0C00AEF374 /* BWGestureTrackView.m */,
 				7D28FB9D16248F3000AEF374 /* BWAppDelegate.h */,
 				7D28FB9E16248F3000AEF374 /* BWAppDelegate.m */,
 				7D28FBC51624A2A800AEF374 /* NSObject+AddressValue.h */,
@@ -205,6 +210,7 @@
 				7D28FBCD1624B79100AEF374 /* BWTimeScrubberView.m in Sources */,
 				7D28FBD01624C8FA00AEF374 /* BWLoggingTextView.m in Sources */,
 				7D28FBD31625E93F00AEF374 /* QuietLog.m in Sources */,
+				7D28FBD61625FC0C00AEF374 /* BWGestureTrackView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
