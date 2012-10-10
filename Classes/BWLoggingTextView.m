@@ -1,5 +1,8 @@
 #import "BWLoggingTextView.h"
 
+// TODO(markd): use different pipes for stdout / stderr, and forward stuff from
+//              the hijacked pipes to the new ones.
+
 @interface BWLoggingTextView () {
     NSMutableString *_contents;
     int _oldStandardOut;
