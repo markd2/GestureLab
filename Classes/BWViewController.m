@@ -92,45 +92,7 @@
     [self.gestureTrackView trackGestureRecognizer: twoTap];
     [self.gestureTrackView trackGestureRecognizer: pinchy];
 
-
-    [longPress addObserver: self
-               forKeyPath: @"state"
-               options: NSKeyValueObservingOptionNew
-               context: (__bridge void *) self];
-    
 } // addSomeGestures
-
-
-static const char *g_stateNames[] = {
-    "possible",
-    "began",
-    "changed",
-    "recognized / ended",
-    "cancelled",
-    "failed"
-};
-
-
-- (void) gronk: (UILongPressGestureRecognizer *) pressy {
-    QuietLog (@"DEPRESSY - state is %s", g_stateNames[pressy.state]);
-} // gronk
-
-
-- (void) observeValueForKeyPath: (NSString *) keyPath
-                       ofObject: (id) object 
-                         change: (NSDictionary *) change 
-                        context: (void *) context {
-    if (context == (__bridge void *)self) {
-        NSNumber *state = change[@"new"];
-        QuietLog (@"Observed - state is %s", g_stateNames[state.integerValue]);
-
-    } else {
-        [super observeValueForKeyPath: keyPath
-               ofObject: object
-               change: change
-               context: context];
-    }
-} // observeValueForKeyPath
 
 
 @end // BWViewController

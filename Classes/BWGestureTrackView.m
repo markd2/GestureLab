@@ -6,6 +6,7 @@
 
 @interface BWGestureTrackView () {
     NSMutableArray *_recognizers;
+    BOOL _recording;
 }
 
 @end // extension
@@ -48,10 +49,63 @@ static const CGFloat kLabelTextSize = 15.0;
 
 - (void) trackGestureRecognizer: (UIGestureRecognizer *) gestureRecognizer {
     [_recognizers addObject: gestureRecognizer];
+    [self startWatchingRecognizer: gestureRecognizer];
     [self setNeedsDisplay];
 
 } // trackGestureRecognizer
 
+
+- (void) startWatchingRecognizer: (UIGestureRecognizer *) recognizer {
+
+    [recognizer addObserver: self
+                forKeyPath: @"state"
+                options: NSKeyValueObservingOptionNew
+                context: (__bridge void *) self];
+    
+} // startWatching
+
+
+- (void) stopWatchingRecognizer: (UIGestureRecognizer *) recognizer {
+    [recognizer removeObserver: self
+                forKeyPath: @"state"
+                context: (__bridge void *) self];
+} // stopWatchingRecognizer
+
+
+static const char *g_stateNames[] = {
+    "possible",
+    "began",
+    "changed",
+    "recognized / ended",
+    "cancelled",
+    "failed"
+};
+
+
+- (void) observeValueForKeyPath: (NSString *) keyPath
+                       ofObject: (id) object 
+                         change: (NSDictionary *) change 
+                        context: (void *) context {
+
+    if (context == (__bridge void *)self
+        && [keyPath isEqualToString: @"state"]) {
+        NSNumber *state = change[@"new"];
+        QuietLog (@"Observed - %@'s state is %s", 
+                  [object class],
+                  g_stateNames[state.integerValue]);
+
+    } else {
+        [super observeValueForKeyPath: keyPath
+               ofObject: object
+               change: change
+               context: context];
+    }
+} // observeValueForKeyPath
+
+
+
+
+// --------------------------------------------------
 
 - (void) drawBackground: (CGRect) rect {
     [[UIColor whiteColor] set];
