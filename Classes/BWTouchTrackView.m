@@ -313,6 +313,7 @@ static UIColor *kTrackingBackgroundColor;
         [self startTrackingTouch: touch];
         [self trackTouch: touch];
     }
+    QuietLog (@"began");
 } // touchesBegan
 
 
@@ -320,6 +321,7 @@ static UIColor *kTrackingBackgroundColor;
     for (UITouch *touch in touches) {
         [self trackTouch: touch];
     }
+    QuietLog (@"moved");
 } // touchesMoved
 
 
@@ -328,7 +330,7 @@ static UIColor *kTrackingBackgroundColor;
         [self trackTouch: touch];
         [self stopTrackingTouch: touch];
     }
-
+    QuietLog (@"ended");
 } // touchesEnded
 
 
@@ -337,6 +339,7 @@ static UIColor *kTrackingBackgroundColor;
         [self trackTouch: touch];
         [self stopTrackingTouch: touch];
     }
+    QuietLog (@"cancelled");
 } // touchesCancelled
 
 @end // BWTouchView

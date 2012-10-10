@@ -12,6 +12,9 @@
 #import "BWTimeScrubberView.h"
 #import "BWTouchTrackView.h"
 
+#import "QuietLog.h"
+
+
 @interface BWViewController () <BWTimeScrubberDelegate, BWTouchTrackViewDelegate>
 
 @end
@@ -34,6 +37,8 @@
          includeTimestamp: NO];
     [self.loggingTextView addLine: @"Look here for NSLog / QuietLog / etc.\n"
          includeTimestamp: NO];
+
+    [self addSomeGestures];
 } // viewDidLoad
 
 
@@ -62,6 +67,50 @@
 } // touchTrackEndedTracking
 
 
+- (void) addSomeGestures {
+    UILongPressGestureRecognizer *longPress =
+        [[UILongPressGestureRecognizer alloc] initWithTarget: self
+                                              action: @selector(gronk:)];
+
+    [self.touchTrackView addGestureRecognizer: longPress];
+    [longPress addObserver: self
+               forKeyPath: @"state"
+               options: NSKeyValueObservingOptionNew
+               context: (__bridge void *) self];
+    
+} // addSomeGestures
+
+
+static const char *g_stateNames[] = {
+    "possible",
+    "began",
+    "changed",
+    "recognized / ended",
+    "cancelled",
+    "failed"
+};
+
+
+- (void) gronk: (UILongPressGestureRecognizer *) pressy {
+    QuietLog (@"DEPRESSY - state is %s", g_stateNames[pressy.state]);
+} // gronk
+
+
+- (void) observeValueForKeyPath: (NSString *) keyPath
+                       ofObject: (id) object 
+                         change: (NSDictionary *) change 
+                        context: (void *) context {
+    if (context == (__bridge void *)self) {
+        NSNumber *state = change[@"new"];
+        QuietLog (@"Observed - state is %s", g_stateNames[state.integerValue]);
+
+    } else {
+        [super observeValueForKeyPath: keyPath
+               ofObject: object
+               change: change
+               context: context];
+    }
+} // observeValueForKeyPath
+
 
 @end // BWViewController
-
