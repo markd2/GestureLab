@@ -29,8 +29,11 @@
     self.touchTrackView.delegate = self;
     self.timeScrubber.delegate = self;
     self.timeScrubber.totalDuration = 0.0;
-    [self.loggingTextView addLine: @"greeble hoover ni bork\n"];
-    [self.loggingTextView addLine: @"Fnord Blorf!!\n"];
+
+    [self.loggingTextView addLine: @"Tap and drag in the gesture view to start recognizers.\n"
+         includeTimestamp: NO];
+    [self.loggingTextView addLine: @"Look here for NSLog / QuietLog / etc.\n"
+         includeTimestamp: NO];
 } // viewDidLoad
 
 

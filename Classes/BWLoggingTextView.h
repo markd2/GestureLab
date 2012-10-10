@@ -5,6 +5,7 @@
 @interface BWLoggingTextView : UITextView
 
 - (void) addLine: (NSString *) line;
+- (void) addLine: (NSString *) line  includeTimestamp: (BOOL) stampy;
 
 - (void) displayToTimestamp: (NSTimeInterval) timestamp;  // From 0 .. whenver
 

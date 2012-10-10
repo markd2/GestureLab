@@ -135,17 +135,24 @@ bailout:
 } // scrollToEnd
 
 
-- (void) addLine: (NSString *) line {
+- (void) addLine: (NSString *) line  includeTimestamp: (BOOL) stampy {
     BWLogEntry *entry = [BWLogEntry entryWithLine: line];
     [_lines addObject: entry];
 
-    NSTimeInterval now = entry.timestamp - _startTimestamp;
-    [_contents appendFormat: kTimestampFormat, now];
+    if (stampy) {
+        NSTimeInterval now = entry.timestamp - _startTimestamp;
+        [_contents appendFormat: kTimestampFormat, now];
+    }
     [_contents appendString: line];
     self.text = _contents;
 
     [self scrollToEnd];
 
+} // addLine
+
+
+- (void) addLine: (NSString *) line {
+    [self addLine: line  includeTimestamp: YES];
 } // addLine
 
 
