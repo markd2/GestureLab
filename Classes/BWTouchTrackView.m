@@ -274,6 +274,15 @@ static UIColor *kTrackingBackgroundColor;
         [_touchTracks setObject: track  forKey: touchAddress];
     }
 
+    if (touch.phase == UITouchPhaseCancelled) {
+        // We got the cancelled prior/instead-of the began, which confuses our drawing.
+        // So add a synthetic began
+        BWTouchThing *thing = [BWTouchThing thingFromUITouch: touch];
+
+        thing.phase = UITouchPhaseBegan;
+        [track addObject: thing];
+    }
+
 } // startTrackingTouch
 
 
