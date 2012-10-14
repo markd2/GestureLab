@@ -17,7 +17,9 @@
 
 
 @interface BWViewController () <BWTimeScrubberDelegate,
-    BWTouchTrackViewDelegate, BWGestureTrackViewDelegate>
+    BWTouchTrackViewDelegate, BWGestureTrackViewDelegate> {
+    NSTimeInterval _recordingStart;
+}
 
 @end
 
@@ -89,6 +91,8 @@
     self.timeScrubber.mode = kModeReadonly;
     [self.loggingTextView clear];
     [self.gestureTrackView startRecording];
+
+    _recordingStart = [NSDate timeIntervalSinceReferenceDate];
 } // touchTrackBeganTracking
 
 
@@ -104,11 +108,28 @@
 
     [self.gestureTrackView stopRecording];
 
+    QuietLog (@"END TRACKING %f", touchTrack.trackingDuration);
+
 } // touchTrackEndedTracking
 
 
 - (void) trackViewCompletedLastRecognizer: (BWGestureTrackView *) trackView {
     QuietLog (@"ALL DONE!");
+
+    NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
+    NSTimeInterval delta = now - _recordingStart;
+
+    QuietLog (@"DELTA DAWN %f > %f", delta, self.timeScrubber.totalDuration);
+
+    if (delta > self.timeScrubber.totalDuration) {
+        self.timeScrubber.totalDuration = delta;
+        self.gestureTrackView.totalDuration = delta;
+
+        // TODO(markd): make the above setNeedsDisplay
+        [self.timeScrubber setNeedsDisplay];
+        [self.gestureTrackView setNeedsDisplay];
+    }
+
 } // trackViewCompletedLastRecognizer
 
 

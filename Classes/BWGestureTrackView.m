@@ -10,6 +10,26 @@ static const CGFloat kRecognizerHeight = 30.0;
 static const CGFloat kLabelWidth = 200;
 static const CGFloat kLabelTextSize = 15.0; 
 
+
+static const char *g_stateNames[] = {
+    "possible",
+    "began",
+    "changed",
+    "recognized / ended",
+    "cancelled",
+    "failed"
+};
+
+static const char *g_stateInitials[] = {
+    "P",
+    "B",
+    "C",
+    "R",
+    "X",
+    "F"
+};
+
+
 // How long to wait before returning to ready-to-track state.
 static const CGFloat kLastTouchTimeout = 1.0;
 
@@ -158,15 +178,6 @@ static const CGFloat kLastTouchTimeout = 1.0;
 } // observeValueForKeyPath
 
 
-static const char *g_stateNames[] = {
-    "possible",
-    "began",
-    "changed",
-    "recognized / ended",
-    "cancelled",
-    "failed"
-};
-
 - (void) recordState: (UIGestureRecognizerState) state
        forRecognizer: (UIGestureRecognizer *) recognizer {
 
@@ -248,6 +259,36 @@ static const char *g_stateNames[] = {
 } // drawText
 
 
+- (void) drawRecognizer: (UIGestureRecognizer *) recognizer
+                 inRect: (CGRect) rect {
+    NSValue *key = recognizer.bwAddressValue;
+
+    NSArray *track = [_recordedActions objectForKey: key];
+    if (track == nil) return; // nothing recorded for this recognizer yet.
+
+    CGFloat pointsPerSecond = rect.size.width / self.totalDuration;
+    QuietLog (@"PPS %f for rect %@ duration %f", pointsPerSecond,
+              NSStringFromCGRect(rect), self.totalDuration);
+
+    for (BWGestureThing *thing in track) {
+        NSTimeInterval adjustedTimestamp = thing.timestamp - _startTimestamp;
+        CGFloat xPosition = rect.origin.x + adjustedTimestamp * pointsPerSecond;
+
+        QuietLog (@"xpos %f for %s", xPosition, g_stateNames[thing.state]);
+
+        CGRect labelRect = CGRectMake (xPosition - kLabelTextSize, rect.origin.y,
+                                       kLabelTextSize * 2, rect.size.height);
+        NSString *initial = [NSString stringWithFormat: @"%s",
+                                      g_stateInitials[thing.state]];
+        [self drawText: initial  inRect: labelRect];
+
+        [[UIColor redColor] set];
+        UIRectFrame (labelRect);
+    }
+    
+} // drawRecognizer
+
+
 - (void) drawRecognizersInRect: (CGRect) rect {
     CGRect recognizerRect = CGRectMake (rect.origin.x, rect.origin.y,
                                         rect.size.width, kRecognizerHeight);
@@ -261,6 +302,11 @@ static const char *g_stateNames[] = {
         labelRect.size.width = kLabelWidth;
         [self drawText: [[recognizer class] description]
               inRect: labelRect];
+
+        CGRect contentsRect = recognizerRect;
+        contentsRect.size.width -= kLabelWidth;
+        contentsRect.origin.x += kLabelWidth;
+        [self drawRecognizer: recognizer  inRect: contentsRect];
 
         recognizerRect.origin.y += kRecognizerHeight;
     }
