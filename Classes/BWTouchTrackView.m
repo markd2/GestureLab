@@ -166,6 +166,7 @@ static UIColor *kTrackingBackgroundColor;
                 switch (thing.phase) {
                 case UITouchPhaseBegan:
                     [path moveToPoint: thing.locationInView];
+                    [path addLineToPoint: thing.locationInView];
                     break;
 
                 case UITouchPhaseStationary:
