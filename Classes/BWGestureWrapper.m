@@ -67,14 +67,12 @@
 - (void) untrackTouches: (NSSet *) touches {
     [_touchesInFlight minusSet: touches];
     if (_touchesInFlight.count == 0) {
-        QuietLog (@"-= DONE?!? =-");
         [self.delegate wrapperStoppedTracking: self];
     }
 } // untrackTouches.  Wow, that's a terrible name.
 
 
 - (void) touchesBegan: (NSSet *) touches withEvent: (UIEvent *) event {
-    QuietLog (@"BEGAN");
     [self trackTouches: touches];
     [self.recognizer touchesBegan: touches  withEvent:event];
 } // touchesBegan
@@ -82,14 +80,12 @@
 
 - (void) touchesEnded: (NSSet *) touches
             withEvent: (UIEvent *) event {
-    QuietLog (@"ENDED");
     [self untrackTouches: touches];
     [self.recognizer touchesEnded: touches  withEvent:event];
 } // touchesEnded
 
 - (void) touchesCancelled: (NSSet *) touches
                 withEvent: (UIEvent *) event {
-    QuietLog (@"CANCELLED");
     [self untrackTouches: touches];
     [self.recognizer touchesCancelled: touches  withEvent:event];
 } // touchesCancelled
