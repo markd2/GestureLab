@@ -28,13 +28,59 @@ static const CGFloat kTriangleBaseWidth = 30.0;
                                        0.0)];
     [triangle addLineToPoint: CGPointMake (playheadPosition + (kTriangleBaseWidth / 2.0),
                                            0.0)];
-    [triangle addLineToPoint: CGPointMake (playheadPosition, rect.size.height)];
+    [triangle addLineToPoint: CGPointMake (playheadPosition, rect.size.height / 2.0)];
     [triangle closePath];
 
     [[UIColor blackColor] set];
     [triangle fill];
 
 } // drawPlayheadInRect
+
+
+- (void) drawTimelineInRect: (CGRect) rect {
+    CGFloat currentTime;
+    CGFloat pointsPerSecond = rect.size.width / self.totalDuration;
+    UIBezierPath *path = [UIBezierPath bezierPath];
+
+    [[UIColor lightGrayColor] set];
+
+    // draw little stubblies at 1/10th seconds
+    currentTime = 0.1;
+    [path removeAllPoints];
+    while (currentTime < self.totalDuration) {
+        [path moveToPoint: CGPointMake (currentTime * pointsPerSecond,
+                                        rect.size.height / 1.25)];
+        [path addLineToPoint: CGPointMake (currentTime * pointsPerSecond, 
+                                           rect.size.height)];
+        currentTime += 0.1;
+    }
+    [path stroke];
+
+    // draw half-length ones at half seconds
+    currentTime = 0.5;
+    [path removeAllPoints];
+    while (currentTime < self.totalDuration) {
+        [path moveToPoint: CGPointMake (currentTime * pointsPerSecond,
+                                        rect.size.height / 2.0)];
+        [path addLineToPoint: CGPointMake (currentTime * pointsPerSecond, 
+                                           rect.size.height)];
+        currentTime += 1.0;
+    }
+    [path stroke];
+
+    // Draw full-length ones at full seconds
+    currentTime = 1.0;
+    [[UIColor grayColor] set];
+    [path removeAllPoints];
+    while (currentTime < self.totalDuration) {
+        [path moveToPoint: CGPointMake (currentTime * pointsPerSecond, 0.0)];
+        [path addLineToPoint: CGPointMake (currentTime * pointsPerSecond, 
+                                           rect.size.height)];
+        currentTime += 1.0;
+    }
+    [path stroke];
+
+} // drawTimelineInRect
 
 
 - (void) drawRect: (CGRect) rect {
@@ -50,6 +96,7 @@ static const CGFloat kTriangleBaseWidth = 30.0;
 
     if (self.mode == kModeScrubbable) {
         [self drawPlayheadInRect: bounds];
+        [self drawTimelineInRect: bounds];
     }
 
     [[UIColor blackColor] set];
