@@ -16,10 +16,18 @@
 
 #import "QuietLog.h"
 
+// How long to wait before returning to ready-to-track state.
+static const CGFloat kLastTouchTimeout = 1.0;
 
-@interface BWViewController () <BWTimeScrubberDelegate,
-    BWTouchTrackViewDelegate, BWGestureTrackViewDelegate> {
+
+@interface BWViewController () <BWTimeScrubberDelegate, 
+                                    BWTouchTrackViewDelegate,
+                                    BWGestureWrapperDelegate> {
     NSTimeInterval _recordingStart;
+    NSTimeInterval _recordingMaybeEnded;
+    BOOL _trackCompleted;
+    BOOL _gesturesCompleted;
+    NSMutableSet *_gesturesInFlight;
 }
 
 @end
@@ -35,7 +43,6 @@
 	// Do any additional setup after loading the view, typically from a nib.
 
     self.touchTrackView.delegate = self;
-    self.gestureTrackView.delegate = self;
     self.timeScrubber.delegate = self;
     self.timeScrubber.totalDuration = 0.0;
 
@@ -43,6 +50,8 @@
          includeTimestamp: NO];
     [self.loggingTextView addLine: @"Look here for NSLog / QuietLog / etc.\n"
          includeTimestamp: NO];
+
+    _gesturesInFlight = [NSMutableSet set];
 
     [self addSomeGestures];
 } // viewDidLoad
@@ -81,6 +90,11 @@
         [BWGestureWrapper wrapperWithGestureRecognizer: twoTap];
     __unused BWGestureWrapper *pannyWrapped =
         [BWGestureWrapper wrapperWithGestureRecognizer: panny];
+
+    longPressWrapped.delegate = self;
+    pinchyWrapped.delegate = self;
+    twoTapWrapped.delegate = self;
+    pannyWrapped.delegate = self;
     
     //[self.touchTrackView addGestureRecognizer: longPress];
     // [self.touchTrackView addGestureRecognizer: twoTap];
@@ -129,48 +143,78 @@
 } // scrubbedToTime
 
 
+- (void) handleTrackingEnded {
+    if (!_trackCompleted || !_gesturesCompleted) return;
+
+    NSTimeInterval delta = _recordingMaybeEnded - _recordingStart;
+    QuietLog (@"detla is %f", delta);
+
+    self.timeScrubber.mode = kModeScrubbable;
+
+    self.timeScrubber.totalDuration = delta;
+    self.timeScrubber.currentTime = delta;
+
+    self.gestureTrackView.totalDuration = delta;
+    self.gestureTrackView.currentTime = delta;
+
+    [self.timeScrubber setNeedsDisplay];
+    [self.gestureTrackView setNeedsDisplay];
+
+} // handleTrackingEnded
+
+
 - (void) touchTrackBeganTracking: (BWTouchTrackView *) touchTrack {
     self.timeScrubber.mode = kModeReadonly;
     [self.loggingTextView clear];
     [self.gestureTrackView startRecording];
 
     _recordingStart = [NSDate timeIntervalSinceReferenceDate];
+    _trackCompleted = NO;
 } // touchTrackBeganTracking
 
 
 - (void) touchTrackEndedTracking: (BWTouchTrackView *) touchTrack {
-    // TODO(markd): move to common "end recording" place.
-    self.timeScrubber.mode = kModeScrubbable;
 
-    self.timeScrubber.totalDuration = touchTrack.trackingDuration;
-    self.timeScrubber.currentTime = touchTrack.trackingDuration;
+    _trackCompleted = YES;
 
-    self.gestureTrackView.totalDuration = touchTrack.trackingDuration;
-    self.gestureTrackView.currentTime = touchTrack.trackingDuration;
+    NSTimeInterval possibleEnd = _recordingStart + touchTrack.trackingDuration;
+    if (possibleEnd > _recordingMaybeEnded) _recordingMaybeEnded = possibleEnd;
 
-    [self.gestureTrackView stopRecording];
+    _recordingMaybeEnded = [NSDate timeIntervalSinceReferenceDate];
+    [self handleTrackingEnded];
 
-    QuietLog (@"END TRACKING %f", touchTrack.trackingDuration);
+    QuietLog (@"END TRACKING VIEW %f", touchTrack.trackingDuration);
 
 } // touchTrackEndedTracking
 
 
-- (void) trackViewCompletedLastRecognizer: (BWGestureTrackView *) trackView {
-    QuietLog (@"ALL DONE!");
+- (void) assumeTrackingDone {
+    _gesturesCompleted = YES;
+    [self handleTrackingEnded];
+    NSLog (@"ALL DONE WITH TRACKING GESTURES");
+} // assumeTrackingDone
 
-    NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
-    NSTimeInterval delta = now - _recordingStart;
 
-    if (delta > self.timeScrubber.totalDuration) {
-        self.timeScrubber.totalDuration = delta;
-        self.gestureTrackView.totalDuration = delta;
+- (void) wrapperStartedTracking: (BWGestureWrapper *) wrapper {
+    [_gesturesInFlight addObject: wrapper];
+    [NSObject cancelPreviousPerformRequestsWithTarget: self
+              selector: @selector(assumeTrackingDone)
+              object: nil];
 
-        // TODO(markd): make the above setNeedsDisplay
-        [self.timeScrubber setNeedsDisplay];
-        [self.gestureTrackView setNeedsDisplay];
+} // wrapperStartedTracking
+
+
+- (void) wrapperStoppedTracking: (BWGestureWrapper *) wrapper {
+    [_gesturesInFlight removeObject: wrapper];
+
+    if (_gesturesInFlight.count == 0) {
+        _recordingMaybeEnded = [NSDate timeIntervalSinceReferenceDate];
+        [self performSelector: @selector(assumeTrackingDone)
+              withObject: nil
+              afterDelay: kLastTouchTimeout];
     }
 
-} // trackViewCompletedLastRecognizer
+} // wrapperStoppedTracking
 
 
 @end // BWViewController
