@@ -147,7 +147,6 @@ static const CGFloat kLastTouchTimeout = 1.0;
     if (!_trackCompleted || !_gesturesCompleted) return;
 
     NSTimeInterval delta = _recordingMaybeEnded - _recordingStart;
-    QuietLog (@"detla is %f", delta);
 
     self.timeScrubber.mode = kModeScrubbable;
 
@@ -180,10 +179,7 @@ static const CGFloat kLastTouchTimeout = 1.0;
     NSTimeInterval possibleEnd = _recordingStart + touchTrack.trackingDuration;
     if (possibleEnd > _recordingMaybeEnded) _recordingMaybeEnded = possibleEnd;
 
-    _recordingMaybeEnded = [NSDate timeIntervalSinceReferenceDate];
     [self handleTrackingEnded];
-
-    QuietLog (@"END TRACKING VIEW %f", touchTrack.trackingDuration);
 
 } // touchTrackEndedTracking
 
@@ -191,7 +187,6 @@ static const CGFloat kLastTouchTimeout = 1.0;
 - (void) assumeTrackingDone {
     _gesturesCompleted = YES;
     [self handleTrackingEnded];
-    NSLog (@"ALL DONE WITH TRACKING GESTURES");
 } // assumeTrackingDone
 
 
