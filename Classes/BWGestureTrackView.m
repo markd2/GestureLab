@@ -39,7 +39,6 @@ static const CGFloat kLastTouchTimeout = 1.0;
     NSTimeInterval _startTimestamp;
 
     NSMutableArray *_recognizers;
-    NSMutableSet *_recognizersInFlight;
     NSMutableDictionary *_recordedActions;
 }
 
@@ -61,7 +60,6 @@ static const CGFloat kLastTouchTimeout = 1.0;
 
 - (void) commonInit {
     _recognizers = [NSMutableArray array];
-    _recognizersInFlight = [NSMutableSet set];
     _recordedActions = [NSMutableDictionary dictionary];
 } // commonInit
 
@@ -122,11 +120,6 @@ static const CGFloat kLastTouchTimeout = 1.0;
 } // stopWatchingRecognizer
 
 
-- (void) notifyDelegateAllDone {
-    [self.delegate trackViewCompletedLastRecognizer: self];
-} // notifyDelegateAllDone
-
-
 - (void) observeValueForKeyPath: (NSString *) keyPath
                        ofObject: (id) object 
                          change: (NSDictionary *) change 
@@ -143,29 +136,10 @@ static const CGFloat kLastTouchTimeout = 1.0;
         if (   state == UIGestureRecognizerStateEnded // a.k.a. recognized
             || state == UIGestureRecognizerStateFailed
             || state == UIGestureRecognizerStateCancelled) {
-
-            [_recognizersInFlight removeObject: object];
-
-            if (_recognizersInFlight.count == 0) {
-                [self performSelector: @selector(notifyDelegateAllDone)
-                      withObject: nil
-                      afterDelay: kLastTouchTimeout];
-            }
-
             // The reset to possible state isn't being done in a KVOable manner,
             // so assume it returns to possible when reaching a terminal state.
             [self recordState: UIGestureRecognizerStatePossible
                   forRecognizer: object];
-
-
-        } else {
-            // It's possible for a recognizer to go from done to back alive
-            // during a logical gesture event recording session, so add in-flights
-            // back in.
-            [_recognizersInFlight addObject: object];
-            [NSObject cancelPreviousPerformRequestsWithTarget: self
-                      selector: @selector(notifyDelegateAllDone)
-                      object: nil];
         }
 
     } else {
@@ -196,14 +170,12 @@ static const CGFloat kLastTouchTimeout = 1.0;
 
 
 - (void) startRecording {
-    [_recognizersInFlight removeAllObjects];
     [_recordedActions removeAllObjects];
 
     _recording = YES;
     _startTimestamp = [NSDate timeIntervalSinceReferenceDate];
 
     for (UIGestureRecognizer *recognizer in _recognizers) {
-        [_recognizersInFlight addObject: recognizer];
         [self recordState: UIGestureRecognizerStatePossible
               forRecognizer: recognizer];
     }
