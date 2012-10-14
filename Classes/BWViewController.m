@@ -20,7 +20,7 @@
 
 // How long to wait before returning to ready-to-track state.
 static const CGFloat kLastTouchTimeout = 1.0;
-
+static const CGFloat kMinScrubTime = 1.0;
 
 @interface BWViewController () <BWTimeScrubberDelegate, 
                                     BWTouchTrackViewDelegate,
@@ -163,6 +163,8 @@ static const CGFloat kLastTouchTimeout = 1.0;
     if (!_trackCompleted || !_gesturesCompleted) return;
 
     NSTimeInterval delta = _recordingMaybeEnded - _recordingStart;
+
+    if (delta < kMinScrubTime) delta = kMinScrubTime;
 
     self.timeScrubber.mode = kModeScrubbable;
 
