@@ -1,10 +1,23 @@
 #import "BWGestureWrapper.h"
+
+// TODO(markd): see why the pinch gesture recognizer is not cooperating.
+
 #import <UIKit/UIGestureRecognizerSubclass.h>
+
+#import "QuietLog.h"
+
+@interface BWGestureWrapper () {
+    NSMutableSet *_touchesInFlight;
+}
+
+@end // BWGestureWrapper
+
 
 @implementation BWGestureWrapper
 
 - (id) initWithGestureRecognizer: (UIGestureRecognizer *) recognizer {
     _recognizer = recognizer;
+    _touchesInFlight = [NSMutableSet set];
 
     return self;
 
@@ -16,8 +29,12 @@
 } // wrapperWithGestureRecognizer
 
 
+- (Class) class {
+    return self.recognizer.class;
+} // class
+
+
 - (void) forwardInvocation: (NSInvocation *) invocation {
-    NSLog (@"forwarding %s", (char *)invocation.selector);
     if ([self.recognizer respondsToSelector: invocation.selector]) {
         [invocation invokeWithTarget: self.recognizer];
     } else {
@@ -35,30 +52,38 @@
 // --------------------------------------------------
 // Spies
 
-- (void) setState: (UIGestureRecognizerState) state {
-    // not getting called.
-    NSLog (@"STATE IS %d", state);
-    [self.recognizer setState: state];
 
-} // setState
+- (void) trackTouches: (NSSet *) touches {
+    [_touchesInFlight unionSet: touches];
+} // trackTouches
 
 
-- (void) reset {
-    // not getting called.
-    NSLog (@"RESET");
-    [self.recognizer reset];
-} // reset
+- (void) untrackTouches: (NSSet *) touches {
+    [_touchesInFlight minusSet: touches];
+    if (_touchesInFlight.count == 0) {
+        QuietLog (@"-= DONE?!? =-");
+    }
+} // untrackTouches.  Wow, that's a terrible name.
+
+
+- (void) touchesBegan: (NSSet *) touches withEvent: (UIEvent *) event {
+    QuietLog (@"BEGAN");
+    [self trackTouches: touches];
+    [self.recognizer touchesBegan: touches  withEvent:event];
+} // touchesBegan
 
 
 - (void) touchesEnded: (NSSet *) touches
             withEvent: (UIEvent *) event {
-    NSLog (@"ENDED");
+    QuietLog (@"ENDED");
+    [self untrackTouches: touches];
     [self.recognizer touchesEnded: touches  withEvent:event];
 } // touchesEnded
 
 - (void) touchesCancelled: (NSSet *) touches
                 withEvent: (UIEvent *) event {
-    NSLog (@"CANCELLED");
+    QuietLog (@"CANCELLED");
+    [self untrackTouches: touches];
     [self.recognizer touchesCancelled: touches  withEvent:event];
 } // touchesCancelled
 
