@@ -56,32 +56,70 @@
 
 - (void) addSomeGestures {
     UILongPressGestureRecognizer *longPress =
-        [[UILongPressGestureRecognizer alloc] initWithTarget: nil
+        [[UILongPressGestureRecognizer alloc] initWithTarget: self
                                               action: @selector(longPress:)];
 
     UITapGestureRecognizer *twoTap =
-        [[UITapGestureRecognizer alloc] initWithTarget: nil
+        [[UITapGestureRecognizer alloc] initWithTarget: self
                                         action: @selector(twoTap:)];
     twoTap.numberOfTapsRequired = 2;
     twoTap.numberOfTouchesRequired = 2;
 
     UIPinchGestureRecognizer *pinchy =
-        [[UIPinchGestureRecognizer alloc] initWithTarget: nil
+        [[UIPinchGestureRecognizer alloc] initWithTarget: self
                                           action: @selector(iPinchYou:)];
 
+    UIPanGestureRecognizer *panny =
+        [[UIPanGestureRecognizer alloc] initWithTarget: self
+                                        action: @selector(panny:)];
+
+    __unused BWGestureWrapper *longPressWrapped =
+        [BWGestureWrapper wrapperWithGestureRecognizer: longPress];
     __unused BWGestureWrapper *pinchyWrapped = 
         [BWGestureWrapper wrapperWithGestureRecognizer: pinchy];
+    __unused BWGestureWrapper *twoTapWrapped =
+        [BWGestureWrapper wrapperWithGestureRecognizer: twoTap];
+    __unused BWGestureWrapper *pannyWrapped =
+        [BWGestureWrapper wrapperWithGestureRecognizer: panny];
     
-    [self.touchTrackView addGestureRecognizer: longPress];
-    [self.touchTrackView addGestureRecognizer: twoTap];
+    //[self.touchTrackView addGestureRecognizer: longPress];
+    // [self.touchTrackView addGestureRecognizer: twoTap];
+    // [self.touchTrackView addGestureRecognizer: pinchy];
+    [self.touchTrackView addGestureRecognizer: (id)longPressWrapped];
+    [self.touchTrackView addGestureRecognizer: (id)twoTapWrapped];
     [self.touchTrackView addGestureRecognizer: (id)pinchyWrapped];
+    [self.touchTrackView addGestureRecognizer: (id)pannyWrapped];
 
     [self.gestureTrackView removeAllRecognizers];
-    [self.gestureTrackView trackGestureRecognizer: longPress];
-    [self.gestureTrackView trackGestureRecognizer: twoTap];
-    [self.gestureTrackView trackGestureRecognizer: pinchy];
+    // [self.gestureTrackView trackGestureRecognizer: longPress];
+    // [self.gestureTrackView trackGestureRecognizer: twoTap];
+    // [self.gestureTrackView trackGestureRecognizer: pinchy];
+    [self.gestureTrackView trackGestureRecognizer: (id)longPressWrapped];
+    [self.gestureTrackView trackGestureRecognizer: (id)twoTapWrapped];
+    [self.gestureTrackView trackGestureRecognizer: (id)pinchyWrapped];
+    [self.gestureTrackView trackGestureRecognizer: (id)pannyWrapped];
 
 } // addSomeGestures
+
+
+- (void) iPinchYou: (UIPinchGestureRecognizer *) pinchy {
+    QuietLog (@"PEENCH");
+} // iPinchYou
+
+
+- (void) twoTap: (UITapGestureRecognizer *) tappy {
+    QuietLog (@"TAPPY");
+} // twoTap
+
+
+- (void) longPress: (UILongPressGestureRecognizer *) pressy {
+    QuietLog (@"PRESSY");
+} // longPress
+
+
+- (void) panny: (UIPanGestureRecognizer *) panny {
+    QuietLog (@"PANNY");
+} // panny
 
 
 - (void) timeScrubber: (BWTimeScrubberView *) scrubbed
@@ -122,8 +160,6 @@
 
     NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval delta = now - _recordingStart;
-
-    QuietLog (@"DELTA DAWN %f > %f", delta, self.timeScrubber.totalDuration);
 
     if (delta > self.timeScrubber.totalDuration) {
         self.timeScrubber.totalDuration = delta;
