@@ -2,7 +2,7 @@
 
 #import <QuartzCore/QuartzCore.h>  // For layer styles
 
-static const BOOL kShouldHijack = NO;
+static const BOOL kShouldHijack = YES;
 
 
 // TODO(markd) : add unhijack, at least before blog posting.
