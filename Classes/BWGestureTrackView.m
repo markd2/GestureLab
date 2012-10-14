@@ -124,7 +124,6 @@ static const CGFloat kLastTouchTimeout = 1.0;
 
 - (void) notifyDelegateAllDone {
     [self.delegate trackViewCompletedLastRecognizer: self];
-    QuietLog (@"HOOVER %@", _recordedActions);
 } // notifyDelegateAllDone
 
 
@@ -192,8 +191,6 @@ static const CGFloat kLastTouchTimeout = 1.0;
     BWGestureThing *thing = [BWGestureThing thingFromGesture: recognizer
                                             state: state];
     [track addObject: thing];
-
-    QuietLog (@"%@ -> %s", [recognizer class], g_stateNames[state]);
 
 } // recordState
 
@@ -267,14 +264,10 @@ static const CGFloat kLastTouchTimeout = 1.0;
     if (track == nil) return; // nothing recorded for this recognizer yet.
 
     CGFloat pointsPerSecond = rect.size.width / self.totalDuration;
-    QuietLog (@"PPS %f for rect %@ duration %f", pointsPerSecond,
-              NSStringFromCGRect(rect), self.totalDuration);
 
     for (BWGestureThing *thing in track) {
         NSTimeInterval adjustedTimestamp = thing.timestamp - _startTimestamp;
         CGFloat xPosition = rect.origin.x + adjustedTimestamp * pointsPerSecond;
-
-        QuietLog (@"xpos %f for %s", xPosition, g_stateNames[thing.state]);
 
         CGRect labelRect = CGRectMake (xPosition - kLabelTextSize, rect.origin.y,
                                        kLabelTextSize * 2, rect.size.height);
