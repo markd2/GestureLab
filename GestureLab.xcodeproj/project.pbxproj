@@ -24,6 +24,7 @@
 		7D28FBD31625E93F00AEF374 /* QuietLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBD21625E93F00AEF374 /* QuietLog.m */; };
 		7D28FBD61625FC0C00AEF374 /* BWGestureTrackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FBD51625FC0C00AEF374 /* BWGestureTrackView.m */; };
 		7D28FDF0162B1BD200AEF374 /* BWGestureWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FDEE162B1BD200AEF374 /* BWGestureWrapper.m */; };
+		7D28FDF5162B6E4D00AEF374 /* BIDCheckMarkGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D28FDF4162B6E4D00AEF374 /* BIDCheckMarkGestureRecognizer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,6 +58,8 @@
 		7D28FBD51625FC0C00AEF374 /* BWGestureTrackView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWGestureTrackView.m; path = Classes/BWGestureTrackView.m; sourceTree = SOURCE_ROOT; };
 		7D28FDEE162B1BD200AEF374 /* BWGestureWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWGestureWrapper.m; path = Classes/BWGestureWrapper.m; sourceTree = SOURCE_ROOT; };
 		7D28FDEF162B1BD200AEF374 /* BWGestureWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BWGestureWrapper.h; path = Classes/BWGestureWrapper.h; sourceTree = SOURCE_ROOT; };
+		7D28FDF3162B6E4D00AEF374 /* BIDCheckMarkGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BIDCheckMarkGestureRecognizer.h; path = Classes/BIDCheckMarkGestureRecognizer.h; sourceTree = "<group>"; };
+		7D28FDF4162B6E4D00AEF374 /* BIDCheckMarkGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BIDCheckMarkGestureRecognizer.m; path = Classes/BIDCheckMarkGestureRecognizer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +79,7 @@
 		7D28FB7F16248F3000AEF374 = {
 			isa = PBXGroup;
 			children = (
+				7D28FDF2162B6E3100AEF374 /* Custom Recognizers */,
 				7D28FB9416248F3000AEF374 /* GestureLab */,
 				7D28FB8D16248F3000AEF374 /* Frameworks */,
 				7D28FB8B16248F3000AEF374 /* Products */,
@@ -139,6 +143,15 @@
 				7D28FB9C16248F3000AEF374 /* GestureLab-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		7D28FDF2162B6E3100AEF374 /* Custom Recognizers */ = {
+			isa = PBXGroup;
+			children = (
+				7D28FDF3162B6E4D00AEF374 /* BIDCheckMarkGestureRecognizer.h */,
+				7D28FDF4162B6E4D00AEF374 /* BIDCheckMarkGestureRecognizer.m */,
+			);
+			name = "Custom Recognizers";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -217,6 +230,7 @@
 				7D28FBD31625E93F00AEF374 /* QuietLog.m in Sources */,
 				7D28FBD61625FC0C00AEF374 /* BWGestureTrackView.m in Sources */,
 				7D28FDF0162B1BD200AEF374 /* BWGestureWrapper.m in Sources */,
+				7D28FDF5162B6E4D00AEF374 /* BIDCheckMarkGestureRecognizer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

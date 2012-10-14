@@ -8,6 +8,8 @@
 
 #import "BWViewController.h"
 
+#import "BIDCheckMarkGestureRecognizer.h"
+
 #import "BWGestureTrackView.h"
 #import "BWLoggingTextView.h"
 #import "BWTimeScrubberView.h"
@@ -81,6 +83,10 @@ static const CGFloat kLastTouchTimeout = 1.0;
     UIPanGestureRecognizer *panny =
         [[UIPanGestureRecognizer alloc] initWithTarget: self
                                         action: @selector(panny:)];
+    
+    BIDCheckMarkGestureRecognizer *checky =
+        [[BIDCheckMarkGestureRecognizer alloc] initWithTarget: self
+                                                action: @selector(checky:)];
 
     __unused BWGestureWrapper *longPressWrapped =
         [BWGestureWrapper wrapperWithGestureRecognizer: longPress];
@@ -90,11 +96,14 @@ static const CGFloat kLastTouchTimeout = 1.0;
         [BWGestureWrapper wrapperWithGestureRecognizer: twoTap];
     __unused BWGestureWrapper *pannyWrapped =
         [BWGestureWrapper wrapperWithGestureRecognizer: panny];
+    __unused BWGestureWrapper *checkyWrapped =
+        [BWGestureWrapper wrapperWithGestureRecognizer: checky];
 
     longPressWrapped.delegate = self;
     pinchyWrapped.delegate = self;
     twoTapWrapped.delegate = self;
     pannyWrapped.delegate = self;
+    checkyWrapped.delegate = self;
     
     //[self.touchTrackView addGestureRecognizer: longPress];
     // [self.touchTrackView addGestureRecognizer: twoTap];
@@ -102,7 +111,8 @@ static const CGFloat kLastTouchTimeout = 1.0;
     [self.touchTrackView addGestureRecognizer: (id)longPressWrapped];
     [self.touchTrackView addGestureRecognizer: (id)twoTapWrapped];
     [self.touchTrackView addGestureRecognizer: (id)pinchyWrapped];
-    [self.touchTrackView addGestureRecognizer: (id)pannyWrapped];
+    [self.touchTrackView addGestureRecognizer: (id)checkyWrapped];
+    // [self.touchTrackView addGestureRecognizer: (id)pannyWrapped];
 
     [self.gestureTrackView removeAllRecognizers];
     // [self.gestureTrackView trackGestureRecognizer: longPress];
@@ -111,7 +121,8 @@ static const CGFloat kLastTouchTimeout = 1.0;
     [self.gestureTrackView trackGestureRecognizer: (id)longPressWrapped];
     [self.gestureTrackView trackGestureRecognizer: (id)twoTapWrapped];
     [self.gestureTrackView trackGestureRecognizer: (id)pinchyWrapped];
-    [self.gestureTrackView trackGestureRecognizer: (id)pannyWrapped];
+    // [self.gestureTrackView trackGestureRecognizer: (id)pannyWrapped];
+    [self.gestureTrackView trackGestureRecognizer: (id)checkyWrapped];
 
 } // addSomeGestures
 
@@ -133,6 +144,11 @@ static const CGFloat kLastTouchTimeout = 1.0;
 
 - (void) panny: (UIPanGestureRecognizer *) panny {
     QuietLog (@"PANNY");
+} // panny
+
+
+- (void) checky: (BIDCheckMarkGestureRecognizer *) checky {
+    QuietLog (@"CHECKY");
 } // panny
 
 
