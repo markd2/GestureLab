@@ -54,7 +54,13 @@
 
 
 - (void) trackTouches: (NSSet *) touches {
+    if (_touchesInFlight.count == 0) {
+        // Moving from not-tracking to tracking.
+        [self.delegate wrapperStartedTracking: self];
+    }
+
     [_touchesInFlight unionSet: touches];
+
 } // trackTouches
 
 
@@ -62,6 +68,7 @@
     [_touchesInFlight minusSet: touches];
     if (_touchesInFlight.count == 0) {
         QuietLog (@"-= DONE?!? =-");
+        [self.delegate wrapperStoppedTracking: self];
     }
 } // untrackTouches.  Wow, that's a terrible name.
 

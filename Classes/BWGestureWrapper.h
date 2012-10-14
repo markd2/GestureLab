@@ -6,10 +6,23 @@
 
 @class UIGestureRecognizer;
 
+@protocol BWGestureWrapperDelegate;
+
+
 @interface BWGestureWrapper : NSProxy
 
 @property (nonatomic, readonly) UIGestureRecognizer *recognizer;
+@property (nonatomic, weak) id <BWGestureWrapperDelegate> delegate;
 
 + (id) wrapperWithGestureRecognizer: (UIGestureRecognizer *) recognizer;
 
 @end // BWGestureWrapper
+
+
+@protocol BWGestureWrapperDelegate <NSObject>
+
+- (void) wrapperStartedTracking: (BWGestureWrapper *) wrapper;
+- (void) wrapperStoppedTracking: (BWGestureWrapper *) wrapper;
+
+@end // BWGestureWrapperDelegate
+
