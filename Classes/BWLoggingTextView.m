@@ -2,6 +2,8 @@
 
 #import <QuartzCore/QuartzCore.h>  // For layer styles
 
+static const BOOL kShouldHijack = NO;
+
 
 // TODO(markd) : add unhijack, at least before blog posting.
 
@@ -116,7 +118,7 @@ bailout:
 
 
 - (void) commonInit {
-    [self hijackOutStreams];
+    if (kShouldHijack) [self hijackOutStreams];
 
     _contents = [NSMutableString string];
     _lines = [NSMutableArray array];

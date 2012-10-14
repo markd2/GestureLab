@@ -12,6 +12,7 @@
 #import "BWLoggingTextView.h"
 #import "BWTimeScrubberView.h"
 #import "BWTouchTrackView.h"
+#import "BWGestureWrapper.h"
 
 #import "QuietLog.h"
 
@@ -67,10 +68,13 @@
     UIPinchGestureRecognizer *pinchy =
         [[UIPinchGestureRecognizer alloc] initWithTarget: nil
                                           action: @selector(iPinchYou:)];
+
+    __unused BWGestureWrapper *pinchyWrapped = 
+        [BWGestureWrapper wrapperWithGestureRecognizer: pinchy];
     
     [self.touchTrackView addGestureRecognizer: longPress];
     [self.touchTrackView addGestureRecognizer: twoTap];
-    [self.touchTrackView addGestureRecognizer: pinchy];
+    [self.touchTrackView addGestureRecognizer: (id)pinchyWrapped];
 
     [self.gestureTrackView removeAllRecognizers];
     [self.gestureTrackView trackGestureRecognizer: longPress];
