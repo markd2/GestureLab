@@ -136,6 +136,8 @@ static const CGFloat kLabelBreathe = 2.0; // How far to skootch '3s' from the ti
 
     NSTimeInterval scrubbedTime = self.totalDuration * percentageAcross;
 
+    if (scrubbedTime < 0.0) scrubbedTime = 0.0;
+
     [self setCurrentTime: scrubbedTime];
     [self.delegate timeScrubber: self  scrubbedToTime: scrubbedTime];
 
