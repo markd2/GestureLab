@@ -1,6 +1,7 @@
 #import "BWTimeScrubberView.h"
 
 static const CGFloat kTriangleBaseWidth = 30.0;
+static const CGFloat kTimeLabelTextSize = 12.0;
 
 @implementation BWTimeScrubberView
 
@@ -35,6 +36,24 @@ static const CGFloat kTriangleBaseWidth = 30.0;
     [triangle fill];
 
 } // drawPlayheadInRect
+
+
+- (void) addTimeLabel: (CGFloat) time
+               inRect: (CGRect) rect {
+    NSString *label = [NSString stringWithFormat: @"%ds", (int)time];
+
+    UIFont *font = [UIFont systemFontOfSize: kTimeLabelTextSize];
+
+    CGSize textSize = [label sizeWithFont: font];
+    CGFloat pointsPerSecond = rect.size.width / self.totalDuration;
+
+    CGRect textRect = CGRectMake (time * pointsPerSecond - textSize.width,
+                                  0.0,
+                                  textSize.width, textSize.height);
+    [label drawInRect: textRect
+           withFont: font];
+    
+} // addTimeLabel
 
 
 - (void) drawTimelineInRect: (CGRect) rect {
@@ -76,6 +95,7 @@ static const CGFloat kTriangleBaseWidth = 30.0;
         [path moveToPoint: CGPointMake (currentTime * pointsPerSecond, 0.0)];
         [path addLineToPoint: CGPointMake (currentTime * pointsPerSecond, 
                                            rect.size.height)];
+        [self addTimeLabel: currentTime  inRect: rect];
         currentTime += 1.0;
     }
     [path stroke];
