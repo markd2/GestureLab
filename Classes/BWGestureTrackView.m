@@ -17,6 +17,17 @@ enum {
 };
 
 
+// http://www.colorpicker.com
+static CGFloat g_trackBackgrounds[][3] = {
+    { 222.0, 238.0, 255.0 }, // light blue
+    { 235.0, 255.0, 222.0 }, // light green
+    { 255.0, 222.0, 251.0 }, // light pink
+    { 250.0, 246.0, 182.0 }, // yellowish
+    { 222.0, 222.0, 255.0 }, // blueish
+    { 255.0, 222.0, 222.0 }, // redorangish
+};
+
+
 static const char *g_stateNames[] = {
     "possible",
     "began",
@@ -220,7 +231,7 @@ static const CGFloat kLastTouchTimeout = 1.0;
                                   CGRectGetMidY(rect) - textSize.height / 2.0,
                                   textSize.width, textSize.height);
 
-    [[UIColor whiteColor] set];
+    [[UIColor blackColor] set];
 
     if ([text hasSuffix: @"GestureRecognizer"]) {
         text = [text substringToIndex: text.length - @"GestureRecognizer".length];
@@ -286,12 +297,27 @@ static const CGFloat kLastTouchTimeout = 1.0;
 } // drawRecognizer
 
 
+- (UIColor *) colorForIndex: (NSUInteger) index {
+    // TODO(markd): try not to be stupily expensive.
+    if (index >= sizeof(g_trackBackgrounds) / sizeof(*g_trackBackgrounds)) {
+        assert (!"oops, out of range");
+    }
+    UIColor *color = [UIColor colorWithRed: g_trackBackgrounds[index][0] / 255.0
+                              green: g_trackBackgrounds[index][1] / 255.0
+                              blue: g_trackBackgrounds[index][0] / 255.0
+                              alpha: 1.0];
+    return color;
+
+} // colorForIndex
+
+
 - (void) drawRecognizersInRect: (CGRect) rect {
     CGRect recognizerRect = CGRectMake (rect.origin.x, rect.origin.y,
                                         rect.size.width, kRecognizerHeight);
 
     for (UIGestureRecognizer *recognizer in _recognizers) {
-        UIColor *color = [UIColor bwColorWithAddress: recognizer];
+        NSUInteger index = [_recognizers indexOfObject: recognizer];
+        UIColor *color = [self colorForIndex: index];
         [color set];
         UIRectFill (recognizerRect);
 

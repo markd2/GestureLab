@@ -2,6 +2,7 @@
 
 static const CGFloat kTriangleBaseWidth = 30.0;
 static const CGFloat kTimeLabelTextSize = 12.0;
+static const CGFloat kLabelBreathe = 2.0; // How far to skootch '3s' from the tick line.
 
 @implementation BWTimeScrubberView
 
@@ -47,7 +48,7 @@ static const CGFloat kTimeLabelTextSize = 12.0;
     CGSize textSize = [label sizeWithFont: font];
     CGFloat pointsPerSecond = rect.size.width / self.totalDuration;
 
-    CGRect textRect = CGRectMake (time * pointsPerSecond - textSize.width,
+    CGRect textRect = CGRectMake (time * pointsPerSecond - textSize.width - kLabelBreathe,
                                   0.0,
                                   textSize.width, textSize.height);
     [label drawInRect: textRect
