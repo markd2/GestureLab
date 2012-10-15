@@ -129,26 +129,31 @@ static const CGFloat kMinScrubTime = 1.0;
 
 - (void) iPinchYou: (UIPinchGestureRecognizer *) pinchy {
     QuietLog (@"PEENCH");
+    [self.gestureTrackView recordActionForGestureRecognizer: pinchy];
 } // iPinchYou
 
 
 - (void) twoTap: (UITapGestureRecognizer *) tappy {
     QuietLog (@"TAPPY");
+    [self.gestureTrackView recordActionForGestureRecognizer: tappy];
 } // twoTap
 
 
 - (void) longPress: (UILongPressGestureRecognizer *) pressy {
     QuietLog (@"PRESSY");
+    [self.gestureTrackView recordActionForGestureRecognizer: pressy];
 } // longPress
 
 
 - (void) panny: (UIPanGestureRecognizer *) panny {
     QuietLog (@"PANNY");
+    [self.gestureTrackView recordActionForGestureRecognizer: panny];
 } // panny
 
 
 - (void) checky: (BIDCheckMarkGestureRecognizer *) checky {
     QuietLog (@"CHECKY");
+    [self.gestureTrackView recordActionForGestureRecognizer: checky];
 } // panny
 
 

@@ -91,7 +91,7 @@ static const CGFloat kTimeLabelTextSize = 12.0;
     currentTime = 1.0;
     [[UIColor grayColor] set];
     [path removeAllPoints];
-    while (currentTime < self.totalDuration) {
+    while (currentTime <= self.totalDuration) {
         [path moveToPoint: CGPointMake (currentTime * pointsPerSecond, 0.0)];
         [path addLineToPoint: CGPointMake (currentTime * pointsPerSecond, 
                                            rect.size.height)];

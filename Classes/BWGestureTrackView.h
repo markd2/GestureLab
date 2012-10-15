@@ -10,6 +10,9 @@
 - (void) removeAllRecognizers;
 - (void) trackGestureRecognizer: (UIGestureRecognizer *) gestureRecognizer;
 
+// The recognizer's action was triggered.  Make a note of it.
+- (void) recordActionForGestureRecognizer: (UIGestureRecognizer *) gestureRecognizer;
+
 - (void) startRecording;
 - (void) stopRecording;
 

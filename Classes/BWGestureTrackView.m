@@ -9,6 +9,12 @@
 static const CGFloat kRecognizerHeight = 30.0;
 static const CGFloat kLabelWidth = 200;
 static const CGFloat kLabelTextSize = 15.0; 
+static const CGFloat kActionChevronSize = 6.0;
+
+// Synthetic states for the recognizer tracking
+enum {
+    kActionTriggered = UIGestureRecognizerStateFailed + 2000
+};
 
 
 static const char *g_stateNames[] = {
@@ -50,7 +56,7 @@ static const CGFloat kLastTouchTimeout = 1.0;
 @property (nonatomic, assign) NSTimeInterval timestamp;  // absolute time
 
 + (id) thingFromGesture: (UIGestureRecognizer *) gesture
-                  state: (UIGestureRecognizerState) state;
+                  state: (int) state;
 
 @end // BWGestureThing
 
@@ -237,7 +243,10 @@ static const CGFloat kLastTouchTimeout = 1.0;
 
     CGFloat pointsPerSecond = rect.size.width / self.totalDuration;
 
+    // Render all the various states
     for (BWGestureThing *thing in track) {
+        if (thing.state == kActionTriggered) continue;
+
         NSTimeInterval adjustedTimestamp = thing.timestamp - _startTimestamp;
         CGFloat xPosition = rect.origin.x + adjustedTimestamp * pointsPerSecond;
 
@@ -249,6 +258,29 @@ static const CGFloat kLastTouchTimeout = 1.0;
 
         [[UIColor redColor] set];
         UIRectFrame (labelRect);
+    }
+
+    // Draw the action triggers
+    UIBezierPath *bezierPath = [UIBezierPath bezierPath];
+
+    [[UIColor grayColor] set];
+    for (BWGestureThing *thing in track) {
+        if (thing.state != kActionTriggered) continue;
+
+        [bezierPath removeAllPoints];
+
+        NSTimeInterval adjustedTimestamp = thing.timestamp - _startTimestamp;
+        CGFloat xPosition = rect.origin.x + adjustedTimestamp * pointsPerSecond;
+        CGFloat yBottom = rect.origin.y + rect.size.height;
+
+        // Make a little chevron thing
+        [bezierPath moveToPoint: CGPointMake (xPosition - kActionChevronSize / 2.0,
+                                              yBottom)];
+        [bezierPath addLineToPoint: CGPointMake (xPosition, 
+                                                 yBottom - kActionChevronSize)];
+        [bezierPath addLineToPoint: CGPointMake (xPosition + kActionChevronSize / 2.0,
+                                                 yBottom)];
+        [bezierPath stroke];
     }
     
 } // drawRecognizer
@@ -296,13 +328,19 @@ static const CGFloat kLastTouchTimeout = 1.0;
 } // drawRect
 
 
+- (void) recordActionForGestureRecognizer: (UIGestureRecognizer *) gestureRecognizer {
+    [self recordState: kActionTriggered
+          forRecognizer: gestureRecognizer];
+} // recordActionForGestureRecognizer
+
+
 @end // BWGestureTrackView
 
 
 @implementation BWGestureThing
 
 - (id) initWithGesture: (UIGestureRecognizer *) recognizer
-                 state: (UIGestureRecognizerState) state {
+                 state: (int) state {
 
     if ((self = [super init])) {
         _recognizer = recognizer;
@@ -316,7 +354,7 @@ static const CGFloat kLastTouchTimeout = 1.0;
 
 
 + (id) thingFromGesture: (UIGestureRecognizer *) recognizer
-                  state: (UIGestureRecognizerState) state {
+                  state: (int) state {
     return [[self alloc] initWithGesture: recognizer
                          state: state];
 } // thingFromGesture
@@ -329,5 +367,6 @@ static const CGFloat kLastTouchTimeout = 1.0;
     return description;
 
 } // description
+
 
 @end // BWGestureThing
