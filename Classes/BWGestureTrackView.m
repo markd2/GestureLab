@@ -145,7 +145,8 @@ static const CGFloat kLastTouchTimeout = 1.0;
     if (context == (__bridge void *)self
         && [keyPath isEqualToString: @"state"]) {
 
-        NSNumber *stateNumber = change[@"new"];
+        // NSNumber *stateNumber = change[@"new"];
+        NSNumber *stateNumber = [change objectForKey: @"new"];
         UIGestureRecognizerState state = stateNumber.integerValue;
 
         [self recordState: state  forRecognizer: object];
@@ -266,9 +267,6 @@ static const CGFloat kLastTouchTimeout = 1.0;
         NSString *initial = [NSString stringWithFormat: @"%s",
                                       g_stateInitials[thing.state]];
         [self drawText: initial  inRect: labelRect];
-
-        [[UIColor redColor] set];
-        UIRectFrame (labelRect);
     }
 
     // Draw the action triggers

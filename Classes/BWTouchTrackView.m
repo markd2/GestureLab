@@ -11,7 +11,7 @@ typedef enum : NSInteger {
     kStateScrolledDrawback
 } TrackingState;
 
-static const BOOL kLogTouchActivity = NO;  // Sometimes can be too chatty.
+static const BOOL kLogTouchActivity = YES;  // Sometimes can be too chatty.
 
 static const CGFloat kPromptTextSize = 36.0;
 static const CGFloat kTrackLineWidth = 5.0;
