@@ -257,7 +257,7 @@ static const CGFloat kLastTouchTimeout = 1.0;
 
     // Render all the various states
     for (BWGestureThing *thing in track) {
-        if (thing.state == kActionTriggered) continue;
+        if ((int)thing.state == (int)kActionTriggered) continue;
 
         NSTimeInterval adjustedTimestamp = thing.timestamp - _startTimestamp;
         CGFloat xPosition = rect.origin.x + adjustedTimestamp * pointsPerSecond;
@@ -274,7 +274,7 @@ static const CGFloat kLastTouchTimeout = 1.0;
 
     [[UIColor grayColor] set];
     for (BWGestureThing *thing in track) {
-        if (thing.state != kActionTriggered) continue;
+        if ((int)thing.state != (int)kActionTriggered) continue;
 
         [bezierPath removeAllPoints];
 
